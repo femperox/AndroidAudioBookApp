@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_purple"
+            app:contentInsetStart="10dp"
+            app:titleTextColor="#F8F0F0">
+
+            <Button
+                android:id="@+id/book_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:background="#00FFFFFF"
+                android:text="Мои Книги"
+                android:textColor="#FFFFFF"
+                android:textColorLink="#EF2020"
+                android:textSize="10sp" />
+
+            <Button
+                android:id="@+id/rec_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:background="#00FFFFFF"
+                android:text="Рекомендации"
+                android:textColor="#000000"
+                android:textColorHighlight="#FF0C0C"
+                android:textColorHint="#FFBFBF"
+                android:textSize="10sp" />
+
+            <ImageButton
+                android:id="@+id/usr_btn"
+                style="@android:style/Widget.DeviceDefault.ImageButton"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="right"
+                android:background="#00FFFFFF"
+                android:saveEnabled="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/user"
+                tools:visibility="visible" />
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <FrameLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp" />
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
