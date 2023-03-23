@@ -7,6 +7,10 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +63,19 @@ public class Recommendation extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recommendation, container, false);
+        View v = inflater.inflate(R.layout.fragment_recommendation, container, false);
+
+        ArrayList<BookRecommendItem> items = new ArrayList<>();
+
+
+        items.add(new BookRecommendItem(R.drawable.user, "Item1", "human1"));
+        items.add(new BookRecommendItem(R.drawable.user_clicked, "Item2","human2"));
+        items.add(new BookRecommendItem(R.drawable.user, "Item3","human1"));
+
+        ListRecommendViewAdapter adapter = new ListRecommendViewAdapter(this.getContext(), items);
+        GridView gridView = v.findViewById(R.id.gridViewRecommend);
+        gridView.setAdapter(adapter);
+
+        return v;
     }
 }
