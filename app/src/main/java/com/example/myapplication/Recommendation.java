@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -7,6 +8,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 
@@ -71,10 +73,22 @@ public class Recommendation extends Fragment {
         items.add(new BookRecommendItem(R.drawable.user, "Item1", "human1"));
         items.add(new BookRecommendItem(R.drawable.user_clicked, "Item2","human2"));
         items.add(new BookRecommendItem(R.drawable.user, "Item3","human1"));
+        items.add(new BookRecommendItem(R.drawable.user, "Item4","human2"));
 
         ListRecommendViewAdapter adapter = new ListRecommendViewAdapter(this.getContext(), items);
         GridView gridView = v.findViewById(R.id.gridViewRecommend);
         gridView.setAdapter(adapter);
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                BookRecommendItem bk = (BookRecommendItem)gridView.getItemAtPosition(i);
+                Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
+                nIntent.putExtra("BOOK_SELECTED", bk.getTitle());
+                startActivity(nIntent);
+            }
+        });
 
         return v;
     }

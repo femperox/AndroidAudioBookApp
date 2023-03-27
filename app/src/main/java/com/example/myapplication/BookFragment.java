@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -7,6 +8,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -79,6 +81,17 @@ public class BookFragment extends Fragment {
         ListMainViewAdapter adapter = new ListMainViewAdapter(this.getContext(), items);
         ListView listView = v.findViewById(R.id.listView);
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
+                Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
+                nIntent.putExtra("BOOK_SELECTED", bk.getTitle());
+                startActivity(nIntent);
+            }
+        });
 
         return v;
     }
