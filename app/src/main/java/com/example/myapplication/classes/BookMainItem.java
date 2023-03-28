@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.classes;
 
 import java.util.ArrayList;
 
@@ -6,35 +6,35 @@ public class BookMainItem
 {
     private int mPicture;
     private String mTitle;
-    private String mTime;
+    private Float mTime;
     private String mReader;
     private String mGenres;
 
     private String[] mFavList;
 
-    int getPicture() {
+    public int getPicture() {
         return mPicture;
     }
 
-    String getTitle() {
+    public String getTitle() {
         return mTitle;
     }
 
-    String getTime() {
+    public Float getTime() {
         return mTime;
     }
 
-    String getReader() {
+    public String getReader() {
         return mReader;
     }
 
-    String getGenres() {
+    public String getGenres() {
         return mGenres;
     }
 
     String[] getFavList() {return mFavList;}
 
-    BookMainItem (int picture, String title, String time, String reader, String genres, String[] favList) {
+    public BookMainItem(int picture, String title, Float time, String reader, String genres, String[] favList) {
         mPicture = picture;
         mTitle = title;
         mTime = time;

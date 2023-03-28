@@ -1,6 +1,8 @@
-package com.example.myapplication;
+package com.example.myapplication.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -9,11 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 
-import java.lang.reflect.Array;
+import com.example.myapplication.BookInfoActivity;
+import com.example.myapplication.DatabaseHelper;
+import com.example.myapplication.classes.BookMainItem;
+import com.example.myapplication.adapters.ListMainViewAdapter;
+import com.example.myapplication.R;
+
+import java.io.Console;
 import java.util.ArrayList;
 
 /**
@@ -31,6 +39,11 @@ public class BookFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    DatabaseHelper databaseHelper;
+    SQLiteDatabase db;
+    Cursor userCursor;
+
 
 
     public BookFragment() {
@@ -74,9 +87,27 @@ public class BookFragment extends Fragment {
         ArrayList<BookMainItem> items = new ArrayList<>();
         final String[] favs = new String[] {"ok?"};
 
-        items.add(new BookMainItem(R.drawable.user, "Item1", "12:00:01", "human1", "Romance", favs));
-        items.add(new BookMainItem(R.drawable.user_clicked, "Item2","05:00:01", "human2", "Drama", favs));
-        items.add(new BookMainItem(R.drawable.user, "Item3","00:20:01", "human1", "Romance, Drama", favs));
+        databaseHelper = new DatabaseHelper(getActivity());
+
+        db = databaseHelper.getReadableDatabase();
+
+        //получаем данные из бд в виде курсора
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI, null);
+        // определяем, какие столбцы из курсора будут выводиться в ListView
+
+        userCursor.moveToFirst();
+        while (!userCursor.isAfterLast())
+        {   String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+            Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
+            String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
+            String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+            items.add(new BookMainItem(R.drawable.user, title, time, reader, genres, favs));
+
+            userCursor.moveToNext();
+        }
+        userCursor.close();
+
+        // создаем адаптер, передаем в него курсор
 
         ListMainViewAdapter adapter = new ListMainViewAdapter(this.getContext(), items);
         ListView listView = v.findViewById(R.id.listView);

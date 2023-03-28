@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,12 +11,15 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.myapplication.classes.BookMainItem;
+import com.example.myapplication.R;
+
 import java.util.ArrayList;
 
 public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
 {
 
-    ListMainViewAdapter(@NonNull Context context, ArrayList<BookMainItem> items) {
+    public ListMainViewAdapter(@NonNull Context context, ArrayList<BookMainItem> items) {
         super(context, 0, items);
     }
 
@@ -39,7 +42,7 @@ public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
         title.setText(currentItem.getTitle());
 
         TextView time = listItem.findViewById(R.id.book_main_time);
-        time.setText(currentItem.getTime());
+        time.setText(currentItem.getTime().toString());
 
         TextView reader = listItem.findViewById(R.id.book_main_reader);
         reader.setText(currentItem.getReader());

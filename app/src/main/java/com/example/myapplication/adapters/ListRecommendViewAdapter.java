@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -11,11 +11,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.myapplication.classes.BookRecommendItem;
+import com.example.myapplication.R;
+
 import java.util.ArrayList;
 
 public class ListRecommendViewAdapter extends ArrayAdapter<BookRecommendItem>
 {
-    ListRecommendViewAdapter(@NonNull Context context, ArrayList<BookRecommendItem> items) {
+    public ListRecommendViewAdapter(@NonNull Context context, ArrayList<BookRecommendItem> items) {
         super(context, 0, items);
     }
 

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.classes;
 
 public class BookRecommendItem
 {
@@ -6,17 +6,17 @@ public class BookRecommendItem
     private String mTitle;
     private String mReader;
 
-    int getPicture() {
+    public int getPicture() {
         return mPicture;
     }
-    String getTitle() {
+    public String getTitle() {
         return mTitle;
     }
-    String getReader() {
+    public String getReader() {
         return mReader;
     }
 
-    BookRecommendItem(int picture, String title, String reader)
+    public BookRecommendItem(int picture, String title, String reader)
     {   mPicture = picture;
         mTitle = title;
         mReader = reader;

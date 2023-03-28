@@ -1,6 +1,8 @@
-package com.example.myapplication;
+package com.example.myapplication.fragments;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -10,7 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.ListView;
+
+import com.example.myapplication.BookInfoActivity;
+import com.example.myapplication.DatabaseHelper;
+import com.example.myapplication.classes.BookMainItem;
+import com.example.myapplication.classes.BookRecommendItem;
+import com.example.myapplication.adapters.ListRecommendViewAdapter;
+import com.example.myapplication.R;
 
 import java.util.ArrayList;
 
@@ -29,6 +37,10 @@ public class Recommendation extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    DatabaseHelper databaseHelper;
+    SQLiteDatabase db;
+    Cursor userCursor;
 
     public Recommendation() {
         // Required empty public constructor
@@ -69,11 +81,23 @@ public class Recommendation extends Fragment {
 
         ArrayList<BookRecommendItem> items = new ArrayList<>();
 
+        databaseHelper = new DatabaseHelper(getActivity());
 
-        items.add(new BookRecommendItem(R.drawable.user, "Item1", "human1"));
-        items.add(new BookRecommendItem(R.drawable.user_clicked, "Item2","human2"));
-        items.add(new BookRecommendItem(R.drawable.user, "Item3","human1"));
-        items.add(new BookRecommendItem(R.drawable.user, "Item4","human2"));
+        db = databaseHelper.getReadableDatabase();
+
+        //получаем данные из бд в виде курсора
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI, null);
+        // определяем, какие столбцы из курсора будут выводиться в ListView
+
+        userCursor.moveToFirst();
+        while (!userCursor.isAfterLast())
+        {   String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+            String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
+            items.add(new BookRecommendItem(R.drawable.user, title, reader));
+
+            userCursor.moveToNext();
+        }
+        userCursor.close();
 
         ListRecommendViewAdapter adapter = new ListRecommendViewAdapter(this.getContext(), items);
         GridView gridView = v.findViewById(R.id.gridViewRecommend);
