@@ -9,9 +9,9 @@ public class DatabaseHelper extends SQLiteOpenHelper
     private static final String DATABASE_NAME = "audiobooks.db";
     private static final int SCHEMA = 2; // версия базы данных
 
-    public static final String TABLE_BI = "BookItem"; // название таблицы в бд
-
     // названия столбцов
+    public static final String TABLE_BI = "BookItem"; // таблица личных книг
+
     public static final String COLUMN_BOOK_ID = "BookId";
     public static final String COLUMN_TITLE = "Title";
     public static final String COLUMN_AUTHOR = "Author";
@@ -20,6 +20,31 @@ public class DatabaseHelper extends SQLiteOpenHelper
     public static final String COLUMN_DESC = "Description";
     public static final String COLUMN_TIME = "Time";
     public static final String COLUMN_GENRE = "Genre";
+
+    public static final String TABLE_STATUS = "BookStatus"; // статус прослушивания
+    public static final String COLUMN_STATUS_ID = "StatusId";
+    public static final String COLUMN_STATUS_NAME = "StatusName";
+
+    public static final String TABLE_FAVLIST = "FavList"; // списки избранного
+    public static final String COLUMN_FAVLIST_ID = "FavListId";
+    public static final String COLUMN_FAVLIST_NAME = "FavListName";
+
+
+    public static final String TABLE_STATISTICS = "BookStatistics"; // статистика по книге
+    public static final String COLUMN_STATISTICS_TIME_LISTENED = "TimeListened";
+
+    public static final String TABLE_NOTETYPES = "Note"; // типы заметок
+    public static final String COLUMN_NOTETYPES_ID = "NoteTypeId";
+    public static final String COLUMN_NOTETYPES_NAME = "NoteTypeName";
+
+
+    public static final String TABLE_NOTES = "BookNotes"; // заметки по книге
+    public static final String COLUMN_NOTES_TITLE = "NoteTitle";
+    public static final String COLUMN_NOTES_DESC = "NoteDesc";
+    public static final String COLUMN_NOTES_TIMECODE = "NoteTimecode";
+
+    public static final String TABLE_SETTINGS = "Settings"; // настройки
+
 
 
     public DatabaseHelper(Context context)
