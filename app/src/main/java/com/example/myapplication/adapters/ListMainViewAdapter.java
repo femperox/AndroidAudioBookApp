@@ -35,6 +35,9 @@ public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
         // Get the {@link Word} object located at this position in the list
         BookMainItem currentItem = getItem(position);
 
+        TextView id = listItem.findViewById(R.id.tv_bookId);
+        id.setText(Integer.toString(currentItem.getId()));
+
         ImageView picture = listItem.findViewById(R.id.book_main_image);
         picture.setBackgroundResource(currentItem.getPicture());
 

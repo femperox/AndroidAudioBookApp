@@ -34,6 +34,9 @@ public class ListRecommendViewAdapter extends ArrayAdapter<BookRecommendItem>
         // Get the {@link Word} object located at this position in the list
         BookRecommendItem currentItem = getItem(position);
 
+        TextView id = listItem.findViewById(R.id.tv_bookIdRec);
+        id.setText(Integer.toString(currentItem.getId()));
+
         ImageView picture = listItem.findViewById(R.id.book_recommend_image);
         picture.setBackgroundResource(currentItem.getPicture());
 

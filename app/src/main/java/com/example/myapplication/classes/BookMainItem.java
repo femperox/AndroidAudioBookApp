@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class BookMainItem
 {
     private int mPicture;
+    private int mId;
     private String mTitle;
     private Float mTime;
     private String mReader;
@@ -12,6 +13,7 @@ public class BookMainItem
 
     private String[] mFavList;
 
+    public int getId() {return mId;}
     public int getPicture() {
         return mPicture;
     }
@@ -34,7 +36,8 @@ public class BookMainItem
 
     String[] getFavList() {return mFavList;}
 
-    public BookMainItem(int picture, String title, Float time, String reader, String genres, String[] favList) {
+    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String[] favList) {
+        mId = id;
         mPicture = picture;
         mTitle = title;
         mTime = time;

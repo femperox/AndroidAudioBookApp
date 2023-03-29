@@ -97,11 +97,12 @@ public class BookFragment extends Fragment {
 
         userCursor.moveToFirst();
         while (!userCursor.isAfterLast())
-        {   String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+        {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
+            String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
             Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
             String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
             String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
-            items.add(new BookMainItem(R.drawable.user, title, time, reader, genres, favs));
+            items.add(new BookMainItem(id, R.drawable.user, title, time, reader, genres, favs));
 
             userCursor.moveToNext();
         }
@@ -119,7 +120,7 @@ public class BookFragment extends Fragment {
 
                 BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
                 Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
-                nIntent.putExtra("BOOK_SELECTED", bk.getTitle());
+                nIntent.putExtra("BOOK_SELECTED", bk.getId());
                 startActivity(nIntent);
             }
         });

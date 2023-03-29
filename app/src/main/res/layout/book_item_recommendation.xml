@@ -5,6 +5,13 @@
     android:orientation="vertical">
 
 
+    <TextView
+        android:id="@+id/tv_bookIdRec"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:alpha="0" />
+
     <ImageView
         android:id="@+id/book_recommend_image"
         android:layout_width="32dp"
