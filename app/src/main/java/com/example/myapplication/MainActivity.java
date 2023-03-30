@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Fragment;
 
 import android.app.FragmentManager;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,9 +15,13 @@ import android.widget.ImageButton;
 
 import com.example.myapplication.fragments.BookFragment;
 import com.example.myapplication.fragments.Recommendation;
+import com.example.myapplication.fragments.SmallPlayerFragment;
 import com.example.myapplication.fragments.UserFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
+
+
+    public String FRAGMENT_TAG = "SmallPlayer";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +67,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
-    private void loadFragment(Fragment fragment) {
+    public void loadFragment(Fragment fragment)
+    {
         // create a FragmentManager
         FragmentManager fm = getFragmentManager();
         // create a FragmentTransaction to begin the transaction and replace the Fragment
@@ -75,4 +79,6 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frameLayout, fragment);
         fragmentTransaction.commit(); // save the changes
     }
+
+
 }

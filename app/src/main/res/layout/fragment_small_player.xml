@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_smallPlayer0"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:context=".fragments.SmallPlayerFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_smallPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/holo_purple">
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:id="@+id/tv_smallPlayer_test"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="ok" />
+
+        <LinearLayout
+            android:id="@+id/ll_smallPlayer_btns"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_smallPlayer_titleAuthor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="ok?" />
+
+            <Button
+                android:id="@+id/btn_smallPlayer_playStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0"
+                android:text="|>" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_smallPlayer_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:text="X" />
+    </LinearLayout>
+</RelativeLayout>

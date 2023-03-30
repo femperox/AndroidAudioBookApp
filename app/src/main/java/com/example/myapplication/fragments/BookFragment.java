@@ -1,5 +1,8 @@
 package com.example.myapplication.fragments;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -12,16 +15,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 
 
 import com.example.myapplication.BookInfoActivity;
 import com.example.myapplication.DatabaseHelper;
+import com.example.myapplication.MainActivity;
 import com.example.myapplication.classes.BookMainItem;
 import com.example.myapplication.adapters.ListMainViewAdapter;
 import com.example.myapplication.R;
 
-import java.io.Console;
 import java.util.ArrayList;
 
 /**
@@ -30,6 +32,8 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class BookFragment extends Fragment {
+
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -44,12 +48,10 @@ public class BookFragment extends Fragment {
     SQLiteDatabase db;
     Cursor userCursor;
 
-
-
     public BookFragment() {
         // Required empty public constructor
     }
-
+    public String FRAGMENT_TAG = "SmallPlayer";
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -116,15 +118,41 @@ public class BookFragment extends Fragment {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
+                loadFragment(new SmallPlayerFragment(), bk.getId());
+
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
 
                 BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
                 Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
                 nIntent.putExtra("BOOK_SELECTED", bk.getId());
                 startActivity(nIntent);
+                return false;
             }
         });
 
         return v;
+    }
+
+    public void loadFragment(Fragment fragment, int id)
+    {
+        // create a FragmentManager
+        FragmentManager fm = getFragmentManager();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(DatabaseHelper.COLUMN_BOOK_ID, id);
+        fragment.setArguments(bundle);
+        // create a FragmentTransaction to begin the transaction and replace the Fragment
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        // replace the FrameLayout with new Fragment
+        fragmentTransaction.replace(R.id.fr_smallPlayer, fragment);
+        fragmentTransaction.commit(); // save the changes
     }
 }

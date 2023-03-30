@@ -71,4 +71,12 @@
 
     </LinearLayout>
 
+    <FrameLayout
+        android:id="@+id/fr_smallPlayer"
+        android:tag="littlePlayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
