@@ -1,26 +1,31 @@
 package com.example.myapplication.fragments;
 
-import android.app.Activity;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.os.Bundle;
+import static com.example.myapplication.fragments.BookFragment.mPlayer;
 
 import android.app.Fragment;
-
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.media.PlaybackParams;
+import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.myapplication.DatabaseHelper;
-import com.example.myapplication.MainActivity;
 import com.example.myapplication.R;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 import java.io.IOException;
+import java.time.Duration;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,10 +43,18 @@ public class SmallPlayerFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private MediaPlayer mPlayer;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
+    boolean playFlag = false;
+    boolean firstPlay = true;
+
+    static Context myContext;
+    TextView tv_current_time;
+    SeekBar sk;
+
+    private Handler handler;
+    private Runnable handlerTask;
 
     public SmallPlayerFragment() {
         // Required empty public constructor
@@ -71,6 +84,7 @@ public class SmallPlayerFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -79,11 +93,24 @@ public class SmallPlayerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_small_player, container, false);
 
+
+
         Button btn_close = v.findViewById(R.id.btn_smallPlayer_close);
+        Button btn_playStop = v.findViewById(R.id.btn_smallPlayer_playStop3);
+        Button btn_speed = v.findViewById(R.id.btn_smallPlayer_speed);
+        Button btn_left = v.findViewById(R.id.btn_smallPlayer_left);
+        Button btn_right = v.findViewById(R.id.btn_smallPlayer_right);
         TextView tv_author_title = v.findViewById(R.id.tv_smallPlayer_titleAuthor);
-        TextView tv_test = v.findViewById(R.id.tv_smallPlayer_test);
+        TextView tv_full_time = v.findViewById(R.id.tv_smallPlayer_fullTime);
+        tv_current_time = v.findViewById(R.id.tv_smallPlayer_startTime);
+        LinearLayout ll = v.findViewById(R.id.ll_smallPlayer);
+        sk = v.findViewById(R.id.sb_smallPlayer);
+
+
+
         Bundle bundle = this.getArguments();
 
+        myContext = this.getContext();
 
         databaseHelper = new DatabaseHelper(getActivity());
         db = databaseHelper.getReadableDatabase();
@@ -100,57 +127,145 @@ public class SmallPlayerFragment extends Fragment {
         userCursor.close();
 
         tv_author_title.setText(title + " - " + author);
-        System.out.println(Uri.parse(path));
-        mPlayer = new MediaPlayer();
 
+        sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
-        try
-        {
-            mPlayer.setDataSource(path);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                mPlayer.seekTo(seekBar.getProgress());
+            }
+        });
+
 
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 getFragmentManager().beginTransaction().remove(SmallPlayerFragment.this).commit();
+                stopPlayer();
             }
         });
+
+        btn_playStop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!playFlag)
+                {
+                    if (firstPlay)
+                    {
+                        try
+                        {   mPlayer.reset();
+                            mPlayer.setDataSource(path);
+                            mPlayer.prepare();
+
+                            sk.setMax(mPlayer.getDuration());
+
+                            String d = DurationFormatUtils.formatDuration(mPlayer.getDuration(), "HH:mm:ss", true);
+                            tv_full_time.setText(d);
+                            sk.setProgress(0);
+
+                            firstPlay = false;
+                        }
+
+                        catch (IOException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    mPlayer.start();
+                    btn_playStop.setText("||");
+
+                }
+                else
+                {
+                    mPlayer.pause();
+                    btn_playStop.setText("|>");
+                }
+                playFlag = !playFlag;
+            }
+        });
+
+        btn_speed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                PlaybackParams playbackParams = new PlaybackParams();
+                playbackParams.setSpeed(2);
+                playbackParams.setPitch(1);
+                mPlayer.setPlaybackParams(playbackParams);
+            }
+        });
+
+
+        btn_left.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (mPlayer.isPlaying())
+                {
+                    mPlayer.seekTo(mPlayer.getCurrentPosition() - 10);
+                }
+            }
+        });
+
+        btn_right.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                if (mPlayer.isPlaying())
+                {
+                    mPlayer.seekTo(mPlayer.getCurrentPosition() + 10);
+
+                }
+            }
+        });
+
+        // ползунок проигрывания
+
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (mPlayer.isPlaying())
+                {   int curr = mPlayer.getCurrentPosition();
+                    sk.setProgress(curr);
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run()
+                        {   String d = DurationFormatUtils.formatDuration(curr, "HH:mm:ss", true);
+                            tv_current_time.setText(d);
+                        }
+                    });
+                    //
+
+                }
+            }
+        },0,100);
+
+
+
 
         return v;
     }
 
 
-    public void setSelectedItem(int selectedItem) {
-        TextView tv_author_title = getView().findViewById(R.id.tv_smallPlayer_titleAuthor);
-        tv_author_title.setText("LOL");
-
-        databaseHelper = new DatabaseHelper(getActivity());
-        db = databaseHelper.getReadableDatabase();
-
-        //получаем данные из бд в виде курсора
-        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + selectedItem, null);
-        // определяем, какие столбцы из курсора будут выводиться в ListView
-
-        userCursor.moveToFirst();
-        String path = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PATH));
-        String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
-        String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
-
-        userCursor.close();
-
-        tv_author_title.setText(title + " - " + author);
-        try
-        {   System.out.println(Uri.parse(path));
-            mPlayer.setDataSource(this.getContext(), Uri.parse(path));
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+    private void stopPlayer()
+    {
+        if (mPlayer.isPlaying()) mPlayer.stop();
     }
 
 

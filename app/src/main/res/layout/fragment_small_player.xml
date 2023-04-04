@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_smallPlayer0"
     android:layout_width="match_parent"
@@ -12,40 +13,124 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_alignParentBottom="true"
-        android:background="@android:color/holo_purple">
+        android:background="@android:color/holo_purple"
+        android:paddingLeft="10dp"
+        android:paddingTop="5dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="5dp">
         <!-- TODO: Update blank fragment layout -->
-        <TextView
-            android:id="@+id/tv_smallPlayer_test"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/iv_smallPlayer_image"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
-            android:text="ok" />
+            android:layout_weight="0"
+            android:src="@drawable/ic_launcher_foreground" />
 
         <LinearLayout
             android:id="@+id/ll_smallPlayer_btns"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_smallPlayer_titleAuthor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="ok?" />
+                android:textColor="#FBFAFA" />
 
-            <Button
-                android:id="@+id/btn_smallPlayer_playStop"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="0"
-                android:text="|>" />
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_smallPlayer_left"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:text="«" />
+
+                <Button
+                    android:id="@+id/btn_smallPlayer_playStop3"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:text="|>" />
+
+                <Button
+                    android:id="@+id/btn_smallPlayer_right"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0"
+                    android:text="»" />
+
+                <Button
+                    android:id="@+id/btn_smallPlayer_speed"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="0"
+                    android:text="2x"
+                    android:textSize="8sp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:orientation="vertical">
+
+            <SeekBar
+                android:id="@+id/sb_smallPlayer"
+                android:layout_width="149dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="0"
+                android:progressBackgroundTint="#000000"
+                android:progressTint="#FFC800"
+                android:thumbTint="#FFFFFF" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="15dp"
+                android:layout_weight="0"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_smallPlayer_startTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:textColor="#FFFFFF"
+                    android:textSize="8sp" />
+
+                <TextView
+                    android:id="@+id/tv_smallPlayer_fullTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:gravity="right"
+                    android:textColor="#FFFFFF"
+                    android:textSize="8sp" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
         <Button
             android:id="@+id/btn_smallPlayer_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
             android:layout_weight="0"
-            android:text="X" />
+            android:text="X"
+            android:textSize="8sp" />
+
     </LinearLayout>
 </RelativeLayout>
