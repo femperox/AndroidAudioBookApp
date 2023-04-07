@@ -157,4 +157,9 @@ public class BookFragment extends Fragment {
         fragmentTransaction.replace(R.id.fr_smallPlayer, fragment);
         fragmentTransaction.commit(); // save the changes
     }
+
+    public static void stopPlayer()
+    {
+        if (mPlayer.isPlaying()) mPlayer.stop();
+    }
 }

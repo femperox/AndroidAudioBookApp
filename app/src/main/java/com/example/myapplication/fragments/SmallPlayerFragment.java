@@ -1,8 +1,11 @@
 package com.example.myapplication.fragments;
 
 import static com.example.myapplication.fragments.BookFragment.mPlayer;
+import static com.example.myapplication.fragments.BookFragment.stopPlayer;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,7 +26,6 @@ import com.example.myapplication.R;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
 import java.io.IOException;
-import java.time.Duration;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,6 +54,8 @@ public class SmallPlayerFragment extends Fragment {
     static Context myContext;
     TextView tv_current_time;
     SeekBar sk;
+
+    int rewind_time = 10000;
 
     private Handler handler;
     private Runnable handlerTask;
@@ -115,8 +119,9 @@ public class SmallPlayerFragment extends Fragment {
         databaseHelper = new DatabaseHelper(getActivity());
         db = databaseHelper.getReadableDatabase();
 
+        int id = bundle.getInt(DatabaseHelper.COLUMN_BOOK_ID);
         //получаем данные из бд в виде курсора
-        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + bundle.getInt(DatabaseHelper.COLUMN_BOOK_ID), null);
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + id, null);
         // определяем, какие столбцы из курсора будут выводиться в ListView
 
         userCursor.moveToFirst();
@@ -127,6 +132,13 @@ public class SmallPlayerFragment extends Fragment {
         userCursor.close();
 
         tv_author_title.setText(title + " - " + author);
+
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new FullPlayerFragment(), id);
+            }
+        });
 
         sk.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -168,6 +180,7 @@ public class SmallPlayerFragment extends Fragment {
                             mPlayer.setDataSource(path);
                             mPlayer.prepare();
 
+                            int max = mPlayer.getDuration();
                             sk.setMax(mPlayer.getDuration());
 
                             String d = DurationFormatUtils.formatDuration(mPlayer.getDuration(), "HH:mm:ss", true);
@@ -200,10 +213,13 @@ public class SmallPlayerFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                PlaybackParams playbackParams = new PlaybackParams();
-                playbackParams.setSpeed(2);
-                playbackParams.setPitch(1);
-                mPlayer.setPlaybackParams(playbackParams);
+                if (mPlayer.isPlaying())
+                {
+                    PlaybackParams playbackParams = new PlaybackParams();
+                    playbackParams.setSpeed(2);
+                    playbackParams.setPitch(1);
+                    mPlayer.setPlaybackParams(playbackParams);
+                }
             }
         });
 
@@ -215,7 +231,7 @@ public class SmallPlayerFragment extends Fragment {
             {
                 if (mPlayer.isPlaying())
                 {
-                    mPlayer.seekTo(mPlayer.getCurrentPosition() - 10);
+                    mPlayer.seekTo(mPlayer.getCurrentPosition() - rewind_time);
                 }
             }
         });
@@ -227,7 +243,7 @@ public class SmallPlayerFragment extends Fragment {
             {
                 if (mPlayer.isPlaying())
                 {
-                    mPlayer.seekTo(mPlayer.getCurrentPosition() + 10);
+                    mPlayer.seekTo(mPlayer.getCurrentPosition() + rewind_time);
 
                 }
             }
@@ -262,10 +278,21 @@ public class SmallPlayerFragment extends Fragment {
         return v;
     }
 
-
-    private void stopPlayer()
+    public void loadFragment(Fragment fragment, int id)
     {
-        if (mPlayer.isPlaying()) mPlayer.stop();
+        // create a FragmentManager
+        FragmentManager fm = getFragmentManager();
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(DatabaseHelper.COLUMN_BOOK_ID, id);
+        fragment.setArguments(bundle);
+
+
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        //fragmentTransaction.setCustomAnimations(R.animator.slide_in_left);
+        fragmentTransaction.setCustomAnimations(R.animator.slide_up, R.animator.slide_down, 0, R.animator.slide_down);
+        fragmentTransaction.replace(R.id.fr_bigPlayer, fragment);
+        fragmentTransaction.commit(); // save the changes
     }
 
 

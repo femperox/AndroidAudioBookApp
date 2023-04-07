@@ -133,4 +133,12 @@
             android:textSize="8sp" />
 
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/fr_bigPlayer"
+        android:tag="bigPlayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp" />
+
 </RelativeLayout>
