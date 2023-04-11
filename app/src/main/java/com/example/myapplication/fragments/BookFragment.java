@@ -1,22 +1,31 @@
 package com.example.myapplication.fragments;
 
+import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
-
+import com.hudomju.swipe.SwipeToDismissTouchListener;
+import com.hudomju.swipe.adapter.ListViewAdapter;
 import android.app.Fragment;
+import android.Manifest;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+
+import androidx.core.app.ActivityCompat;
 
 import com.example.myapplication.BookInfoActivity;
 import com.example.myapplication.DatabaseHelper;
@@ -25,6 +34,7 @@ import com.example.myapplication.classes.BookMainItem;
 import com.example.myapplication.adapters.ListMainViewAdapter;
 import com.example.myapplication.R;
 
+import java.io.Console;
 import java.util.ArrayList;
 
 /**
@@ -45,7 +55,8 @@ public class BookFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     public static MediaPlayer mPlayer = new MediaPlayer();
-
+    private static final int MY_REQUEST_CODE_PERMISSION = 1000;
+    private static final int MY_RESULT_CODE_FILECHOOSER = 2000;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
@@ -87,6 +98,8 @@ public class BookFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_book, container, false);
+
+        Button btn_add = v.findViewById(R.id.button_add_book);
 
         ArrayList<BookMainItem> items = new ArrayList<>();
         final String[] favs = new String[] {"ok?"};
@@ -140,8 +153,80 @@ public class BookFragment extends Fragment {
             }
         });
 
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                System.out.println("IJ?");
+                doBrowseFile();
+            }
+        });
+
         return v;
     }
+
+    private void askPermissionAndBrowseFile() {
+        // With Android Level >= 23, you have to ask the user
+        // for permission to access External Storage.
+        System.out.println("why");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) { // Level 23
+
+            // Check if we have Call permission
+            int permisson = ActivityCompat.checkSelfPermission(this.getContext(),
+                    Manifest.permission.READ_EXTERNAL_STORAGE);
+            System.out.println(permisson);
+            System.out.println(this.shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE));
+            if (permisson != PackageManager.PERMISSION_GRANTED) {
+                // If don't have permission so prompt the user.
+                System.out.println("why");
+                requestPermissions(
+                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                        MY_REQUEST_CODE_PERMISSION
+                );
+                return;
+            }
+        }
+        System.out.println("why8");
+        this.doBrowseFile();
+    }
+
+    private void doBrowseFile()  {
+
+        Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        chooseFileIntent.setType("*/*");
+        // Only return URIs that can be opened with ContentResolver
+        chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        chooseFileIntent = Intent.createChooser(chooseFileIntent, "Choose a file");
+        startActivityForResult(chooseFileIntent, MY_RESULT_CODE_FILECHOOSER);
+
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case MY_RESULT_CODE_FILECHOOSER:
+                if (resultCode == Activity.RESULT_OK ) {
+                    if(data != null)  {
+                        Uri fileUri = data.getData();
+
+                        String filePath = null;
+                        try {
+                            System.out.println(fileUri.getPath());
+                            //filePath = FileUtils.getPath(this.getContext(),fileUri);
+                        } catch (Exception e) {
+
+                            Toast.makeText(this.getContext(), "Error: " + e, Toast.LENGTH_SHORT).show();
+                        }
+                        //this.editTextPath.setText(filePath);
+                    }
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
     public void loadFragment(Fragment fragment, int id)
     {

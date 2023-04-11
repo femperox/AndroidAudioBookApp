@@ -25,10 +25,10 @@
             />
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/text_input_search"
             android:layout_width="320dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="35dp"
-            android:id="@+id/text_input_search"
             android:shadowColor="#C9F2FF" />
 
         <Spinner
