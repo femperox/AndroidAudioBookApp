@@ -46,6 +46,7 @@ public class FullPlayerFragment extends Fragment {
     int rewind_time = 10000;
     TextView tv_current_time;
     SeekBar sk;
+    private Timer timer;
 
     public FullPlayerFragment() {
         // Required empty public constructor
@@ -112,6 +113,7 @@ public class FullPlayerFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 tv_close.setRotation(180);
+                timer.cancel();
                 getFragmentManager().beginTransaction().setCustomAnimations(R.animator.slide_down, R.animator.slide_down).remove(FullPlayerFragment.this).commit();
 
             }
@@ -193,7 +195,7 @@ public class FullPlayerFragment extends Fragment {
             }
         });
 
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {

@@ -1,17 +1,24 @@
 package com.example.myapplication.fragments;
 
+import static android.content.Intent.ACTION_OPEN_DOCUMENT;
 import static com.example.myapplication.fragments.BookFragment.mPlayer;
+import static com.example.myapplication.fragments.BookFragment.resolver;
 import static com.example.myapplication.fragments.BookFragment.stopPlayer;
 
+import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.PlaybackParams;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +27,18 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
+
 import com.example.myapplication.DatabaseHelper;
 import com.example.myapplication.R;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
+import java.io.Console;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +72,7 @@ public class SmallPlayerFragment extends Fragment {
 
     private Handler handler;
     private Runnable handlerTask;
+    private Timer timer;
 
     public SmallPlayerFragment() {
         // Required empty public constructor
@@ -92,6 +106,15 @@ public class SmallPlayerFragment extends Fragment {
         }
     }
 
+
+    @Override
+    public void onDestroyView()
+    {
+        timer.cancel();
+        if (mPlayer.isPlaying()) mPlayer.stop();
+        super.onDestroyView();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -110,8 +133,6 @@ public class SmallPlayerFragment extends Fragment {
         LinearLayout ll = v.findViewById(R.id.ll_smallPlayer);
         sk = v.findViewById(R.id.sb_smallPlayer);
 
-
-
         Bundle bundle = this.getArguments();
 
         myContext = this.getContext();
@@ -129,13 +150,16 @@ public class SmallPlayerFragment extends Fragment {
         String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
         String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
 
+        System.out.println(path);
+
         userCursor.close();
 
         tv_author_title.setText(title + " - " + author);
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 loadFragment(new FullPlayerFragment(), id);
             }
         });
@@ -162,7 +186,7 @@ public class SmallPlayerFragment extends Fragment {
         btn_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view)
-            {
+            {   timer.cancel();
                 getFragmentManager().beginTransaction().remove(SmallPlayerFragment.this).commit();
                 stopPlayer();
             }
@@ -177,7 +201,8 @@ public class SmallPlayerFragment extends Fragment {
                     {
                         try
                         {   mPlayer.reset();
-                            mPlayer.setDataSource(path);
+                            //mPlayer.setDataSource(path);
+                            setDataSource(path);
                             mPlayer.prepare();
 
                             int max = mPlayer.getDuration();
@@ -251,7 +276,7 @@ public class SmallPlayerFragment extends Fragment {
 
         // ползунок проигрывания
 
-        Timer timer = new Timer();
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -276,6 +301,49 @@ public class SmallPlayerFragment extends Fragment {
 
 
         return v;
+    }
+
+    private void setDataSource(String path)
+    {
+        try
+        {
+            if (path.contains("content://"))
+            {
+               //Intent openLinkIntent = new Intent(ACTION_OPEN_DOCUMENT, Uri.parse(path));
+               Uri uri = Uri.parse(Uri.decode(path));
+               System.out.println("ehy?");
+               String readOnlyMode = "r";
+               System.out.println(Uri.parse(Uri.decode(path)));
+               System.out.println();
+
+
+                //getContext().grantUriPermission(getContext().getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+                //resolver.takePersistableUriPermission(Uri.parse(Uri.decode(path)), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+               //resolver.takePersistableUriPermission(Uri.parse(path), Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                final int MY_RESULT_CODE_FILECHOOSER = 2000;
+                Intent pickFileIntent = new Intent(getContext(), this.getClass()).setAction(Intent.ACTION_OPEN_DOCUMENT)
+                        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION).setData(uri);
+                pickFileIntent.setType("audio/*");
+                // Only return URIs that can be opened with ContentResolver
+                pickFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
+
+                getContext().startService(pickFileIntent);//w
+
+
+
+                ParcelFileDescriptor pfd = resolver.openFileDescriptor(Uri.parse(path), readOnlyMode);
+                mPlayer.setDataSource(pfd.getFileDescriptor());
+            }
+            else
+            {
+                mPlayer.setDataSource(path);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public void loadFragment(Fragment fragment, int id)

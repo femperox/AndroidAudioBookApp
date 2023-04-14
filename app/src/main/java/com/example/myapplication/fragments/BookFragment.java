@@ -3,6 +3,8 @@ package com.example.myapplication.fragments;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,11 +13,16 @@ import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+
+import com.example.myapplication.classes.FileUtils;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 import android.app.Fragment;
 import android.Manifest;
 
+import android.os.ParcelFileDescriptor;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +42,12 @@ import com.example.myapplication.adapters.ListMainViewAdapter;
 import com.example.myapplication.R;
 
 import java.io.Console;
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 
 /**
@@ -60,6 +73,9 @@ public class BookFragment extends Fragment {
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
+    ListView listView;
+
+    public static ContentResolver resolver;
 
     public BookFragment() {
         // Required empty public constructor
@@ -93,6 +109,7 @@ public class BookFragment extends Fragment {
         }
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -101,35 +118,16 @@ public class BookFragment extends Fragment {
 
         Button btn_add = v.findViewById(R.id.button_add_book);
 
-        ArrayList<BookMainItem> items = new ArrayList<>();
-        final String[] favs = new String[] {"ok?"};
 
         databaseHelper = new DatabaseHelper(getActivity());
 
         db = databaseHelper.getReadableDatabase();
 
-        //получаем данные из бд в виде курсора
-        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI, null);
-        // определяем, какие столбцы из курсора будут выводиться в ListView
+        resolver = this.getContext().getContentResolver();
 
-        userCursor.moveToFirst();
-        while (!userCursor.isAfterLast())
-        {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
-            String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
-            Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
-            String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
-            String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
-            items.add(new BookMainItem(id, R.drawable.user, title, time, reader, genres, favs));
+        listView = v.findViewById(R.id.listView);
+        updateDB();
 
-            userCursor.moveToNext();
-        }
-        userCursor.close();
-
-        // создаем адаптер, передаем в него курсор
-
-        ListMainViewAdapter adapter = new ListMainViewAdapter(this.getContext(), items);
-        ListView listView = v.findViewById(R.id.listView);
-        listView.setAdapter(adapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -165,33 +163,35 @@ public class BookFragment extends Fragment {
         return v;
     }
 
-    private void askPermissionAndBrowseFile() {
-        // With Android Level >= 23, you have to ask the user
-        // for permission to access External Storage.
-        System.out.println("why");
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) { // Level 23
+    private void updateDB()
+    {
+        final String[] favs = new String[] {"ok?"};
 
-            // Check if we have Call permission
-            int permisson = ActivityCompat.checkSelfPermission(this.getContext(),
-                    Manifest.permission.READ_EXTERNAL_STORAGE);
-            System.out.println(permisson);
-            System.out.println(this.shouldShowRequestPermissionRationale(Manifest.permission.READ_EXTERNAL_STORAGE));
-            if (permisson != PackageManager.PERMISSION_GRANTED) {
-                // If don't have permission so prompt the user.
-                System.out.println("why");
-                requestPermissions(
-                        new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
-                        MY_REQUEST_CODE_PERMISSION
-                );
-                return;
-            }
+        ArrayList<BookMainItem> items = new ArrayList<>();
+
+        //получаем данные из бд в виде курсора
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI, null);
+        // определяем, какие столбцы из курсора будут выводиться в ListView
+
+        userCursor.moveToFirst();
+        while (!userCursor.isAfterLast())
+        {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
+            String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+            Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
+            String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
+            String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+            items.add(new BookMainItem(id, R.drawable.user, title, time, reader, genres, favs));
+
+            userCursor.moveToNext();
         }
-        System.out.println("why8");
-        this.doBrowseFile();
+        userCursor.close();
+
+        ListMainViewAdapter adapter = new ListMainViewAdapter(this.getContext(), items);
+        listView.setAdapter(adapter);
     }
 
-    private void doBrowseFile()  {
-
+    private void doBrowseFile()
+    {
         Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
         chooseFileIntent.setType("*/*");
         // Only return URIs that can be opened with ContentResolver
@@ -199,8 +199,6 @@ public class BookFragment extends Fragment {
 
         chooseFileIntent = Intent.createChooser(chooseFileIntent, "Choose a file");
         startActivityForResult(chooseFileIntent, MY_RESULT_CODE_FILECHOOSER);
-
-
     }
 
     @Override
@@ -209,24 +207,50 @@ public class BookFragment extends Fragment {
             case MY_RESULT_CODE_FILECHOOSER:
                 if (resultCode == Activity.RESULT_OK ) {
                     if(data != null)  {
-                        Uri fileUri = data.getData();
+                        String fileUri = data.getDataString();
+                        Uri uri = data.getData();
 
-                        String filePath = null;
-                        try {
-                            System.out.println(fileUri.getPath());
-                            //filePath = FileUtils.getPath(this.getContext(),fileUri);
-                        } catch (Exception e) {
+                        //ContentResolver resolver = this.getContext().getContentResolver();
 
-                            Toast.makeText(this.getContext(), "Error: " + e, Toast.LENGTH_SHORT).show();
+
+
+                        /*
+                        String readOnlyMode = "r";
+                        try (ParcelFileDescriptor pfd =
+                                     resolver.openFileDescriptor(fileUri, readOnlyMode)) {
+
+                                System.out.println(pfd.getFileDescriptor());
+                                //mPlayer.setDataSource(pfd.getFileDescriptor());
+                            // Perform operations on "pfd".
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                        //this.editTextPath.setText(filePath);
+                        */
+
+
+
+                        //System.out.println("content://com.android.providers.media.documents"+fileUri.getPath());
+
+
+                        ContentValues cv = new ContentValues();
+                        cv.put(DatabaseHelper.COLUMN_BOOK_ID, 5);
+                        cv.put(DatabaseHelper.COLUMN_AUTHOR, "test2");
+                        cv.put(DatabaseHelper.COLUMN_GENRE, "test");
+                        cv.put(DatabaseHelper.COLUMN_TITLE, "test title5");
+                        cv.put(DatabaseHelper.COLUMN_READER, "test");
+                        cv.put(DatabaseHelper.COLUMN_DESC, "test");
+                        cv.put(DatabaseHelper.COLUMN_PATH, fileUri);
+
+                        db.insert(DatabaseHelper.TABLE_BI, null, cv);
+                        updateDB();
+
+
                     }
                 }
                 break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     public void loadFragment(Fragment fragment, int id)
     {

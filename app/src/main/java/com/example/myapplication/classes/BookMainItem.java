@@ -10,6 +10,9 @@ public class BookMainItem
     private Float mTime;
     private String mReader;
     private String mGenres;
+    private String mAuthor;
+    private String mPath;
+    private String mDesc;
 
     private String[] mFavList;
 
@@ -34,9 +37,20 @@ public class BookMainItem
         return mGenres;
     }
 
+    public String getPath() {
+        return mPath;
+    }
+    public String getAuthor() {
+        return mAuthor;
+    }
+    public String getDesc() {
+        return mDesc;
+    }
+
     String[] getFavList() {return mFavList;}
 
-    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String[] favList) {
+    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String[] favList)
+    {
         mId = id;
         mPicture = picture;
         mTitle = title;
@@ -44,6 +58,19 @@ public class BookMainItem
         mReader = reader;
         mGenres = genres;
         mFavList = favList;
+    }
+
+    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String author, String desc, String path)
+    {
+        mId = id;
+        mPicture = picture;
+        mTitle = title;
+        mTime = time;
+        mReader = reader;
+        mGenres = genres;
+        mPath = path;
+        mAuthor = author;
+        mDesc = desc;
     }
 
 
