@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import com.example.myapplication.classes.FileUtils;
+import com.google.android.material.textfield.TextInputEditText;
 import com.hudomju.swipe.SwipeToDismissTouchListener;
 import com.hudomju.swipe.adapter.ListViewAdapter;
 import android.app.Fragment;
@@ -23,12 +24,15 @@ import android.Manifest;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -70,10 +74,14 @@ public class BookFragment extends Fragment {
     public static MediaPlayer mPlayer = new MediaPlayer();
     private static final int MY_REQUEST_CODE_PERMISSION = 1000;
     private static final int MY_RESULT_CODE_FILECHOOSER = 2000;
+    private static final int MY_RESULT_CODE_BOOK_ITEM = 1999;
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
     ListView listView;
+    ListMainViewAdapter adapter;
+    Spinner sp_filter;
+    TextInputEditText et_search;
 
     public static ContentResolver resolver;
 
@@ -117,16 +125,47 @@ public class BookFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_book, container, false);
 
         Button btn_add = v.findViewById(R.id.button_add_book);
+        et_search = v.findViewById(R.id.text_input_search);
+        sp_filter = v.findViewById(R.id.spinner_filter_book);
 
+        sp_filter.setSelection(0);
 
         databaseHelper = new DatabaseHelper(getActivity());
-
         db = databaseHelper.getReadableDatabase();
 
         resolver = this.getContext().getContentResolver();
 
         listView = v.findViewById(R.id.listView);
         updateDB();
+
+        sp_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent,
+                                       View itemSelected, int selectedItemPosition, long selectedId) {
+
+
+                et_search.setHint("Фильтрация "+ sp_filter.getSelectedItem().toString().toLowerCase());
+            }
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        et_search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+                // When user changed the Text
+                adapter.filter(cs.toString(), sp_filter.getSelectedItemPosition());
+            }
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+                                          int arg3) {
+                // TODO Auto-generated method stub
+
+            }
+            @Override
+            public void afterTextChanged(Editable arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -146,7 +185,8 @@ public class BookFragment extends Fragment {
                 BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
                 Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
                 nIntent.putExtra("BOOK_SELECTED", bk.getId());
-                startActivity(nIntent);
+                startActivityForResult(nIntent, MY_RESULT_CODE_BOOK_ITEM);
+                //startActivity(nIntent);
                 return false;
             }
         });
@@ -155,7 +195,7 @@ public class BookFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-                System.out.println("IJ?");
+
                 doBrowseFile();
             }
         });
@@ -186,7 +226,9 @@ public class BookFragment extends Fragment {
         }
         userCursor.close();
 
-        ListMainViewAdapter adapter = new ListMainViewAdapter(this.getContext(), items);
+        System.out.println(items.get(0).getId());
+
+        adapter = new ListMainViewAdapter(this.getContext(), items);
         listView.setAdapter(adapter);
     }
 
@@ -248,6 +290,8 @@ public class BookFragment extends Fragment {
                     }
                 }
                 break;
+            case MY_RESULT_CODE_BOOK_ITEM:
+                updateDB();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

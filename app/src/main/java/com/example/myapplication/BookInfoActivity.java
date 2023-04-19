@@ -2,11 +2,13 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -15,6 +17,7 @@ public class BookInfoActivity extends AppCompatActivity {
     DatabaseHelper databaseHelper;
     SQLiteDatabase db;
     Cursor userCursor;
+    boolean editable = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +25,13 @@ public class BookInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_info);
 
         final ImageButton button_back = (ImageButton) findViewById(R.id.back_btn);
-        final TextView tv_author_title = (TextView) findViewById(R.id.tv_author_title);
+        final ImageButton button_edit = (ImageButton) findViewById(R.id.ib_bookActivity_edit);
+        final TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        final TextView tv_author = (TextView) findViewById(R.id.tv_author);
         final TextView tv_genres = (TextView) findViewById(R.id.tv_genres);
-        final TextView tv_desc = (TextView) findViewById(R.id.tv_desc);
+        final EditText tv_desc = (EditText) findViewById(R.id.tv_desc);
         final TextView tv_reder = (TextView) findViewById(R.id.tv_reader);
         final TextView tv_time = (TextView) findViewById(R.id.tv_time);
-
 
         Intent secondIntent = getIntent();
         int id = secondIntent.getIntExtra("BOOK_SELECTED", 0);
@@ -50,7 +54,8 @@ public class BookInfoActivity extends AppCompatActivity {
 
         userCursor.close();
 
-        tv_author_title.setText(title + " - " + author);
+        tv_title.setText(title);
+        tv_author.setText(author);
         tv_desc.setText(desc);
         tv_genres.setText(genres);
         tv_reder.setText(reader);
@@ -61,6 +66,38 @@ public class BookInfoActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 onBackPressed();
+            }
+        });
+
+        button_edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editable = !editable;
+
+                if (editable)
+                {
+                    button_edit.setBackgroundColor(getResources().getColor(R.color.teal_200));
+                }
+                else
+                {
+                    button_edit.setBackgroundColor(getResources().getColor(R.color.white));
+
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(DatabaseHelper.COLUMN_AUTHOR, tv_author.getText().toString());
+                    cv.put(DatabaseHelper.COLUMN_TITLE, tv_title.getText().toString());
+                    cv.put(DatabaseHelper.COLUMN_READER, tv_reder.getText().toString());
+                    cv.put(DatabaseHelper.COLUMN_DESC, tv_desc.getText().toString());
+
+
+                    db.update(DatabaseHelper.TABLE_BI, cv, DatabaseHelper.COLUMN_BOOK_ID+"=?", new String[]{Integer.toString(id)});
+                }
+
+                tv_desc.setEnabled(editable);
+                tv_title.setEnabled(editable);
+                tv_author.setEnabled(editable);
+                tv_reder.setEnabled(editable);
+
             }
         });
     }
