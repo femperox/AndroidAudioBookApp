@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
+import android.media.audiofx.Equalizer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -72,6 +73,7 @@ public class BookFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     public static MediaPlayer mPlayer = new MediaPlayer();
+    public static Equalizer mEq = new Equalizer(0, mPlayer.getAudioSessionId());
     private static final int MY_REQUEST_CODE_PERMISSION = 1000;
     private static final int MY_RESULT_CODE_FILECHOOSER = 2000;
     private static final int MY_RESULT_CODE_BOOK_ITEM = 1999;
@@ -137,6 +139,10 @@ public class BookFragment extends Fragment {
 
         listView = v.findViewById(R.id.listView);
         updateDB();
+
+        mEq.setEnabled(true);
+        short p = 0;
+        System.out.println(mEq.getPresetName(p));
 
         sp_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent,
@@ -226,8 +232,6 @@ public class BookFragment extends Fragment {
         }
         userCursor.close();
 
-        System.out.println(items.get(0).getId());
-
         adapter = new ListMainViewAdapter(this.getContext(), items);
         listView.setAdapter(adapter);
     }
@@ -252,6 +256,8 @@ public class BookFragment extends Fragment {
                         String fileUri = data.getDataString();
                         Uri uri = data.getData();
 
+                        //this.getContext().getContentResolver().takePersistableUriPermission(uri, (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION));
+
                         //ContentResolver resolver = this.getContext().getContentResolver();
 
 
@@ -275,7 +281,7 @@ public class BookFragment extends Fragment {
 
 
                         ContentValues cv = new ContentValues();
-                        cv.put(DatabaseHelper.COLUMN_BOOK_ID, 5);
+                        cv.put(DatabaseHelper.COLUMN_BOOK_ID, 1);
                         cv.put(DatabaseHelper.COLUMN_AUTHOR, "test2");
                         cv.put(DatabaseHelper.COLUMN_GENRE, "test");
                         cv.put(DatabaseHelper.COLUMN_TITLE, "test title5");

@@ -1,5 +1,7 @@
 package com.example.myapplication.fragments;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 
 import android.app.Fragment;
@@ -61,6 +63,24 @@ public class UserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user, container, false);
+        View v = inflater.inflate(R.layout.fragment_user, container, false);
+
+        loadFragment(new EqFragment(), R.id.fr_usr_eqSettings);
+
+        loadFragment(new StatisticsFragment(), R.id.fr_usr_stats);
+
+        return v;
+    }
+
+    public void loadFragment(Fragment fragment, int rid)
+    {
+        // create a FragmentManager
+        FragmentManager fm = getFragmentManager();
+
+        // create a FragmentTransaction to begin the transaction and replace the Fragment
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        // replace the FrameLayout with new Fragment
+        fragmentTransaction.replace(rid, fragment);
+        fragmentTransaction.commit(); // save the changes
     }
 }

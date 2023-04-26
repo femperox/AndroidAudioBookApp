@@ -2,19 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.UserFragment">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".fragments.UserFragment"
+    android:weightSum="2">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="ПОЛЬЗОВАТЕЛЬ ТУТ БУДЕТ" />
 
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/fr_usr_eqSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"></FrameLayout>
 
-    </GridLayout>
+    <FrameLayout
+        android:id="@+id/fr_usr_stats"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"></FrameLayout>
+
 
 </LinearLayout>

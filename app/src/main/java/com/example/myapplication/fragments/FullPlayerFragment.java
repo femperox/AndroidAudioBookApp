@@ -1,5 +1,7 @@
 package com.example.myapplication.fragments;
 
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -10,10 +12,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.example.myapplication.DatabaseHelper;
 import com.example.myapplication.R;
 
 import static com.example.myapplication.fragments.BookFragment.mPlayer;
@@ -89,6 +93,7 @@ public class FullPlayerFragment extends Fragment {
         //Button btn_speed = v.findViewById(R.id.btn_smallPlayer_speed);
         Button btn_left = v.findViewById(R.id.btn_bigPlayer_left);
         Button btn_right = v.findViewById(R.id.btn_bigPlayer_right);
+        ImageButton btn_eqv = v.findViewById(R.id.ib_bigPlayer_eqv);
         TextView tv_full_time = v.findViewById(R.id.tv_bigPlayer_fullTime);
         tv_current_time = v.findViewById(R.id.tv_bigPlayer_startTime);
         TextView tv_close = v.findViewById(R.id.tv_bigPlayer_close);
@@ -108,6 +113,13 @@ public class FullPlayerFragment extends Fragment {
 
         sk_volume.setMax(maxVolume);
         sk_volume.setProgress(curValue);
+
+        btn_eqv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                loadFragment(new EqFragment());
+            }
+        });
 
         tv_close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,5 +229,17 @@ public class FullPlayerFragment extends Fragment {
         },0,100);
 
         return v;
+    }
+
+    public void loadFragment(Fragment fragment)
+    {
+        // create a FragmentManager
+        FragmentManager fm = getFragmentManager();
+
+        // create a FragmentTransaction to begin the transaction and replace the Fragment
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        // replace the FrameLayout with new Fragment
+        fragmentTransaction.replace(R.id.fr_eqSettings, fragment);
+        fragmentTransaction.commit(); // save the changes
     }
 }

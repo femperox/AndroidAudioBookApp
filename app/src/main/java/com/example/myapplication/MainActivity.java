@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity{
         final Button button_book = (Button) findViewById(R.id.book_btn);
         final ImageButton button_usr = (ImageButton) findViewById(R.id.usr_btn);
 
+
+
         loadFragment(new BookFragment());
 
         button_rec.setOnClickListener(new View.OnClickListener() {

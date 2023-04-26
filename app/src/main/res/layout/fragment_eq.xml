@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".fragments.EqFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Spinner
+            android:id="@+id/spinner_filter_presets"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+                android:id="@+id/ll_eqv_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <me.tankery.lib.circularseekbar.CircularSeekBar
+                    android:id="@+id/eqv_freq1"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cs_circle_progress_color="@color/purple_200"
+                    app:cs_circle_stroke_width="18dp"
+                    app:cs_circle_style="round"
+                    app:cs_pointer_angle="20"
+                    app:cs_pointer_color="@color/purple_200"
+                    app:cs_pointer_stroke_width="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_eq_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="TextView"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_eqv_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <me.tankery.lib.circularseekbar.CircularSeekBar
+                    android:id="@+id/eqv_freq2"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cs_circle_progress_color="@color/purple_200"
+                    app:cs_circle_stroke_width="18dp"
+                    app:cs_circle_style="round"
+                    app:cs_pointer_angle="20"
+                    app:cs_pointer_color="@color/purple_200"
+                    app:cs_pointer_stroke_width="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_eq_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="TextView"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_eqv_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <me.tankery.lib.circularseekbar.CircularSeekBar
+                    android:id="@+id/eqv_freq3"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cs_circle_progress_color="@color/purple_200"
+                    app:cs_circle_stroke_width="18dp"
+                    app:cs_circle_style="round"
+                    app:cs_pointer_angle="20"
+                    app:cs_pointer_color="@color/purple_200"
+                    app:cs_pointer_stroke_width="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_eq_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="TextView"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
+
+            <LinearLayout
+                android:id="@+id/ll_eqv_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <me.tankery.lib.circularseekbar.CircularSeekBar
+                    android:id="@+id/eqv_freq4"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cs_circle_progress_color="@color/purple_200"
+                    app:cs_circle_stroke_width="18dp"
+                    app:cs_circle_style="round"
+                    app:cs_pointer_angle="20"
+                    app:cs_pointer_color="@color/purple_200"
+                    app:cs_pointer_stroke_width="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_eq_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="TextView"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_eqv_5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <me.tankery.lib.circularseekbar.CircularSeekBar
+                    android:id="@+id/eqv_freq5"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_gravity="center_horizontal"
+                    app:cs_circle_progress_color="@color/purple_200"
+                    app:cs_circle_stroke_width="18dp"
+                    app:cs_circle_style="round"
+                    app:cs_pointer_angle="20"
+                    app:cs_pointer_color="@color/purple_200"
+                    app:cs_pointer_stroke_width="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_eq_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="5dp"
+                    android:text="TextView"
+                    android:textAlignment="center"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_eq_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Сохранить" />
+
+            <Button
+                android:id="@+id/btn_eq_reset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:text="Сбросить" />
+
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>
