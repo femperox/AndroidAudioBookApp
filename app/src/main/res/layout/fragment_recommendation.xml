@@ -3,10 +3,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
     android:orientation="vertical"
+    android:textAlignment="center"
     tools:context=".fragments.Recommendation">
 
     <!-- TODO: Update blank fragment layout -->
+    <Button
+        android:id="@+id/btn_rec_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:text="Обновить" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Фантастика"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
     <GridView
         android:id="@+id/gridViewRecommend"
         android:layout_width="match_parent"

@@ -191,6 +191,7 @@ public class BookFragment extends Fragment {
                 BookMainItem bk = (BookMainItem)listView.getItemAtPosition(i);
                 Intent nIntent = new Intent(getActivity(), BookInfoActivity.class);
                 nIntent.putExtra("BOOK_SELECTED", bk.getId());
+                nIntent.putExtra("METHOD_SELECTED", "MAIN");
                 startActivityForResult(nIntent, MY_RESULT_CODE_BOOK_ITEM);
                 //startActivity(nIntent);
                 return false;
@@ -223,7 +224,7 @@ public class BookFragment extends Fragment {
         while (!userCursor.isAfterLast())
         {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
             String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
-            Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
+            int time = userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
             String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
             String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
             items.add(new BookMainItem(id, R.drawable.user, title, time, reader, genres, favs));

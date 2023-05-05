@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import static com.example.myapplication.fragments.BookFragment.mPlayer;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
@@ -10,7 +12,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TableLayout;
 import android.widget.TextView;
+
+import com.example.myapplication.adapters.DownloadImageFromInternet;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 public class BookInfoActivity extends AppCompatActivity {
 
@@ -32,34 +40,71 @@ public class BookInfoActivity extends AppCompatActivity {
         final EditText tv_desc = (EditText) findViewById(R.id.tv_desc);
         final TextView tv_reder = (TextView) findViewById(R.id.tv_reader);
         final TextView tv_time = (TextView) findViewById(R.id.tv_time);
+        final ImageView pic = (ImageView) findViewById(R.id.iv_pic);
+        final TableLayout tl_info = (TableLayout) findViewById(R.id.tl_bookInfo_info);
 
         Intent secondIntent = getIntent();
         int id = secondIntent.getIntExtra("BOOK_SELECTED", 0);
+        String method = secondIntent.getStringExtra("METHOD_SELECTED");
 
         databaseHelper = new DatabaseHelper(getApplicationContext());
         db = databaseHelper.getReadableDatabase();
 
         //получаем данные из бд в виде курсора
-        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + id, null);
-        // определяем, какие столбцы из курсора будут выводиться в ListView
+        if (method.equals("MAIN"))
+        {   button_edit.setVisibility(View.VISIBLE);
+            tl_info.setVisibility(View.VISIBLE);
 
-        userCursor.moveToFirst();
+            userCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + id, null);
+            // определяем, какие столбцы из курсора будут выводиться в ListView
 
-        String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
-        Float time = userCursor.getFloat(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
-        String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
-        String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
-        String desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
-        String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
+            userCursor.moveToFirst();
 
-        userCursor.close();
+            String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+            int time = userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
+            String reader = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_READER));
+            String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+            String desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
+            String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
 
-        tv_title.setText(title);
-        tv_author.setText(author);
-        tv_desc.setText(desc);
-        tv_genres.setText(genres);
-        tv_reder.setText(reader);
-        tv_time.setText(time.toString());
+            userCursor.close();
+
+            String d = DurationFormatUtils.formatDuration(time, "HH:mm:ss", true);
+
+            tv_title.setText(title);
+            tv_author.setText(author);
+            tv_desc.setText(desc);
+            tv_genres.setText(genres);
+            tv_reder.setText(reader);
+            tv_time.setText(d);
+        }
+        else
+        {
+            userCursor = db.rawQuery("select * from " + DatabaseHelper.TABLE_BI_REC + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + id, null);
+
+            userCursor.moveToFirst();
+
+            String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+            String path = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PATH));
+            String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+            String desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
+            String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
+
+            userCursor.close();
+
+            button_edit.setVisibility(View.GONE);
+            tl_info.setVisibility(View.GONE);
+
+            tv_title.setText(title);
+            tv_author.setText(author);
+            tv_desc.setText(desc);
+            tv_genres.setText(genres);
+
+            new DownloadImageFromInternet(pic).execute(path);
+
+        }
+
+
 
 
         button_back.setOnClickListener(new View.OnClickListener() {

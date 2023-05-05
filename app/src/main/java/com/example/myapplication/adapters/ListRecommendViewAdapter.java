@@ -1,6 +1,9 @@
 package com.example.myapplication.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +17,7 @@ import androidx.annotation.Nullable;
 import com.example.myapplication.classes.BookRecommendItem;
 import com.example.myapplication.R;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class ListRecommendViewAdapter extends ArrayAdapter<BookRecommendItem>
@@ -38,17 +42,17 @@ public class ListRecommendViewAdapter extends ArrayAdapter<BookRecommendItem>
         id.setText(Integer.toString(currentItem.getId()));
 
         ImageView picture = listItem.findViewById(R.id.book_recommend_image);
-        picture.setBackgroundResource(currentItem.getPicture());
+        new DownloadImageFromInternet(picture).execute(currentItem.getPicture());
+        //picture.setBackgroundResource(currentItem.getPicture());
 
         TextView title = listItem.findViewById(R.id.book_recommend_title);
         title.setText(currentItem.getTitle());
 
         TextView author = listItem.findViewById(R.id.book_recommend_author);
-        author.setText(currentItem.getTitle());
-
-        TextView reader = listItem.findViewById(R.id.book_recommend_reader);
-        reader.setText(currentItem.getReader());
+        author.setText(currentItem.getAuthor());
 
         return listItem;
     }
+
 }
+

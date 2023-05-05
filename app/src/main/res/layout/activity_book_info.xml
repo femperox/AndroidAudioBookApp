@@ -120,6 +120,7 @@
             </LinearLayout>
 
             <TableLayout
+                android:id="@+id/tl_bookInfo_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -172,9 +173,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
-                        android:text="TextView"
                         android:background="@android:color/transparent"
-                        android:enabled="false"/>
+                        android:enabled="false"
+                        android:text="TextView"
+                        android:textSize="14sp" />
 
                     <TextView
                         android:id="@+id/tv_favText"

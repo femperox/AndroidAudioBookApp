@@ -1,25 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:context=".fragments.UserFragment"
-    android:weightSum="2">
+    tools:context=".fragments.UserFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="vertical"
+        >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="3">
 
-    <FrameLayout
-        android:id="@+id/fr_usr_eqSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Настройки эквалайзера"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="20sp" />
 
-    <FrameLayout
-        android:id="@+id/fr_usr_stats"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"></FrameLayout>
+        <FrameLayout
+            android:id="@+id/fr_usr_eqSettings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/textView6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Статистика"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:layout_weight="1"
+            android:textSize="20sp" />
 
 
-</LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/fr_usr_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="400dp"
+                android:layout_weight="1"></FrameLayout>
+
+
+
+
+
+    </LinearLayout>
+    </ScrollView>
+
+
+
+
+</ScrollView>

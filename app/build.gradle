@@ -1,12 +1,11 @@
 plugins {
     id 'com.android.application'
+    id 'com.chaquo.python'
 }
 
 android {
     namespace 'com.example.myapplication'
     compileSdk 33
-
-
 
     defaultConfig {
         applicationId "com.example.myapplication"
@@ -16,6 +15,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+        python {
+            pip {
+                install "pandas"
+                install "scikit-learn"
+                install "matplotlib"
+                install "nltk"
+            }
+        }
     }
 
     buildTypes {
@@ -43,14 +54,15 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'com.google.android.gms:play-services-fitness:21.0.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
+    implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
     implementation group: 'org.aspectj', name: 'aspectjweaver', version: '1.8.10'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.0.1'
     implementation 'com.hudomju:swipe-to-dismiss-undo:1.0'
     implementation 'me.tankery.lib:circularSeekBar:1.4.2'
-    implementation "com.androidplot:androidplot-core:1.5.10"
+    implementation 'com.androidplot:androidplot-core:1.5.10'
 
 }

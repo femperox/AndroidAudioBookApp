@@ -4,30 +4,57 @@ import android.animation.ValueAnimator;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.app.Fragment;
-
 import android.text.TextPaint;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.TextView;
 
+import org.apache.commons.math3.util.Pair;
+import com.androidplot.Region;
 import com.androidplot.pie.PieChart;
 import com.androidplot.pie.PieRenderer;
 import com.androidplot.pie.Segment;
 import com.androidplot.pie.SegmentFormatter;
+import com.androidplot.ui.Anchor;
 import com.androidplot.ui.DynamicTableModel;
+import com.androidplot.ui.HorizontalPositioning;
+import com.androidplot.ui.SeriesBundle;
+import com.androidplot.ui.Size;
+import com.androidplot.ui.SizeMode;
+import com.androidplot.ui.TextOrientation;
+import com.androidplot.ui.VerticalPositioning;
+import com.androidplot.ui.widget.TextLabelWidget;
+import com.androidplot.util.PixelUtils;
+import com.androidplot.xy.BarFormatter;
+import com.androidplot.xy.BarRenderer;
+import com.androidplot.xy.BoundaryMode;
+import com.androidplot.xy.LineAndPointFormatter;
+import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.StepMode;
+import com.androidplot.xy.XYGraphWidget;
+import com.androidplot.xy.XYPlot;
+import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYSeriesFormatter;
 import com.example.myapplication.DatabaseHelper;
 import com.example.myapplication.R;
 import com.example.myapplication.classes.BookMainItem;
 
-import org.apache.commons.lang3.tuple.Pair;
-
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -50,7 +77,12 @@ public class StatisticsFragment extends Fragment {
     SQLiteDatabase db;
     Cursor userCursor;
     public PieChart pie;
+    //public TextView barText;
+    private TextLabelWidget barText;
+    public XYPlot plot;
+    private Pair<Integer, XYSeries> selection;
     public static final int SELECTED_SEGMENT_OFFSET = 10;
+    private static final String NO_SELECTION_TXT = "Touch bar to select.";
 
     public StatisticsFragment() {
         // Required empty public constructor
@@ -94,6 +126,13 @@ public class StatisticsFragment extends Fragment {
         pie = (PieChart) v.findViewById(R.id.mySimplePieChart);
         setGenreStatistics(pie);
 
+        plot = (XYPlot) v.findViewById(R.id.BarPlot);
+        try {
+            setListenedStatistics();
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
         pie.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -132,19 +171,80 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
+        plot.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
+                    onPlotClicked(new PointF(motionEvent.getX(), motionEvent.getY()));
+                }
+                return true;
+            }
+        });
+
 
 
         return v;
     }
 
+    private void setListenedStatistics() throws ParseException {
+        plot.getBackgroundPaint().setColor(Color.TRANSPARENT);
+
+        plot.getBorderPaint().setColor(Color.TRANSPARENT);
+
+        //barText = v.findViewById(R.id.tv_statistics_bar);
+
+        barText = new TextLabelWidget(plot.getLayoutManager(), NO_SELECTION_TXT,
+                new Size(
+                        PixelUtils.dpToPix(100), SizeMode.ABSOLUTE,
+                        PixelUtils.dpToPix(100), SizeMode.ABSOLUTE),
+                TextOrientation.HORIZONTAL);
+
+        barText.getLabelPaint().setTextSize(PixelUtils.dpToPix(16));
+
+        // add a dark, semi-transparent background to the selection label widget:
+        Paint p = new Paint();
+        p.setARGB(100, 0, 0, 0);
+        barText.setBackgroundPaint(p);
+
+        barText.position(
+                0, HorizontalPositioning.RELATIVE_TO_CENTER,
+                PixelUtils.dpToPix(45), VerticalPositioning.ABSOLUTE_FROM_TOP,
+                Anchor.TOP_MIDDLE);
+        barText.pack();
+
+
+        userCursor =  db.rawQuery("select count(*) as count, strftime('%m', " + DatabaseHelper.COLUMN_DATE_START + ") as month from "+ DatabaseHelper.TABLE_BI + " GROUP BY month", null);
+
+        List<Integer> months = new ArrayList<>();
+        List<Integer> counts = new ArrayList<>();
+        if (userCursor.moveToFirst()) {
+            do {
+                int month = userCursor.getInt(userCursor.getColumnIndex("month"));
+                int count = userCursor.getInt(userCursor.getColumnIndex("count"));
+                months.add(month);
+                counts.add(count);
+            } while (userCursor.moveToNext());
+        }
+
+// настройка параметров диаграммы
+
+        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(new DecimalFormat("0"));
+        plot.getGraph().setPaddingLeft(32.0f);
+        plot.getGraph().setPaddingRight(32.0f);
+        plot.getGraph().setPaddingTop(32.0f);
+        plot.getGraph().setPaddingBottom(32.0f);
+
+// создание объекта BarSeries и добавление его в диаграмму
+        BarSeries series = new BarSeries("Count", SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, counts, months);
+        plot.addSeries(series, new BarFormatter(Color.rgb(0, 175, 255), Color.WHITE));
+
+    }
+
     private void setGenreStatistics(PieChart pie)
     {
         // enable the legend:
-        pie.getLegend().setVisible(true);
-
-        pie.getLegend().setTableModel(new DynamicTableModel(4, 2));
-
-
+        //pie.getLegend().setVisible(true);
+        //pie.getLegend().setTableModel(new DynamicTableModel(4, 2));
 
         TextPaint textPaint = new TextPaint();
         //textPaint.setTextSize(10);
@@ -162,7 +262,7 @@ public class StatisticsFragment extends Fragment {
         {
             Integer countG = userCursor.getInt(userCursor.getColumnIndexOrThrow("count"));
             String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
-            count.add(Pair.of(countG, genres));
+            count.add(Pair.create(countG, genres));
 
             userCursor.moveToNext();
         }
@@ -174,7 +274,7 @@ public class StatisticsFragment extends Fragment {
 
         for (Pair<Integer, String> item: count)
         {
-            Segment segment = new Segment(item.getRight(), item.getLeft());
+            Segment segment = new Segment(item.getSecond(), item.getFirst());
             SegmentFormatter formatter = new SegmentFormatter(Color.rgb(r, g, b), Color.TRANSPARENT);
             pie.addSegment(segment, formatter);
             r += 15; g += 10; b -= 2;
@@ -203,6 +303,63 @@ public class StatisticsFragment extends Fragment {
         animator.setDuration(1500);
         animator.start();
 
+    }
 
+    private void onPlotClicked(PointF point) {
+
+        // make sure the point lies within the graph area.  we use gridrect
+        // because it accounts for margins and padding as well.
+        if (plot.containsPoint(point.x, point.y)) {
+            Number x = plot.getXVal(point);
+            Number y = plot.getYVal(point);
+
+            selection = null;
+            double xDistance = 0;
+            double yDistance = 0;
+
+            // find the closest value to the selection:
+            for (SeriesBundle<XYSeries, ? extends XYSeriesFormatter> sfPair : plot
+                    .getRegistry().getSeriesAndFormatterList()) {
+                XYSeries series = sfPair.getSeries();
+                for (int i = 0; i < series.size(); i++) {
+                    Number thisX = series.getX(i);
+                    Number thisY = series.getY(i);
+                    if (thisX != null && thisY != null) {
+                        double thisXDistance =
+                                Region.measure(x, thisX).doubleValue();
+                        double thisYDistance =
+                                Region.measure(y, thisY).doubleValue();
+                        if (selection == null) {
+                            selection = new Pair<>(i, series);
+                            xDistance = thisXDistance;
+                            yDistance = thisYDistance;
+                        } else if (thisXDistance < xDistance) {
+                            selection = new Pair<>(i, series);
+                            xDistance = thisXDistance;
+                            yDistance = thisYDistance;
+                        } else if (thisXDistance == xDistance &&
+                                thisYDistance < yDistance &&
+                                thisY.doubleValue() >= y.doubleValue()) {
+                            selection = new Pair<>(i, series);
+                            xDistance = thisXDistance;
+                            yDistance = thisYDistance;
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // if the press was outside the graph area, deselect:
+            selection = null;
+        }
+
+        if (selection == null) {
+            barText.setText(NO_SELECTION_TXT);
+        } else {
+            barText.setText("Selected: " + selection.getSecond().getTitle() +
+                    " Value: " + selection.getSecond().getY(selection.getFirst()));
+
+        }
+        plot.redraw();
     }
 }

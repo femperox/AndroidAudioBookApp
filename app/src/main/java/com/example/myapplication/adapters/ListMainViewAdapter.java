@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import com.example.myapplication.classes.BookMainItem;
 import com.example.myapplication.R;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -55,7 +57,7 @@ public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
         title.setText(currentItem.getTitle());
 
         TextView time = listItem.findViewById(R.id.book_main_time);
-        time.setText(currentItem.getTime().toString());
+        time.setText(DurationFormatUtils.formatDuration(currentItem.getTime(), "HH:mm:ss", true));
 
         TextView reader = listItem.findViewById(R.id.book_main_reader);
         reader.setText(currentItem.getReader());

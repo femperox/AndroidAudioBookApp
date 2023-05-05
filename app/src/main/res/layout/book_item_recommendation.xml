@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="60dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:baselineAligned="false"
+    android:maxWidth="150dp"
+    android:orientation="vertical"
+    android:textAlignment="textEnd">
 
 
     <TextView
@@ -14,8 +17,9 @@
 
     <ImageView
         android:id="@+id/book_recommend_image"
-        android:layout_width="32dp"
-        android:layout_height="60dp"
+        android:layout_width="108dp"
+        android:layout_height="154dp"
+        android:layout_gravity="center_horizontal"
         android:scaleType="fitXY"
         android:src="@drawable/user" />
 
@@ -23,6 +27,7 @@
         android:id="@+id/book_recommend_title"
         android:layout_width="match_parent"
         android:layout_height="15dp"
+        android:layout_gravity="center_horizontal"
         android:textColor="#000000"
         android:textSize="10sp"
         android:textStyle="bold"></TextView>
@@ -33,38 +38,10 @@
         android:layout_width="match_parent"
         android:layout_height="15dp"
 
+        android:layout_gravity="center_horizontal"
         android:textColor="#000000"
         android:textSize="10sp"
-        android:textStyle="bold"
-        android:text="ok"></TextView>
+        android:textStyle="bold"></TextView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-
-        <TextView
-            android:id="@+id/book_recommend_reader"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="TextView"
-            android:textSize="10sp" />
-
-        <Button
-            android:id="@+id/button_add_book"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:gravity="center"
-            android:insetTop="0dp"
-            android:insetBottom="0dp"
-            android:text="+"
-            android:textAlignment="center"
-            android:focusable="false"
-
-
-            />
-
-    </LinearLayout>
 
 </LinearLayout>

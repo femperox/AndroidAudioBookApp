@@ -7,7 +7,7 @@ public class BookMainItem
     private int mPicture;
     private int mId;
     private String mTitle;
-    private Float mTime;
+    private int mTime;
     private String mReader;
     private String mGenres;
     private String mAuthor;
@@ -25,7 +25,7 @@ public class BookMainItem
         return mTitle;
     }
 
-    public Float getTime() {
+    public int getTime() {
         return mTime;
     }
 
@@ -49,7 +49,7 @@ public class BookMainItem
 
     String[] getFavList() {return mFavList;}
 
-    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String[] favList)
+    public BookMainItem(int id, int picture, String title, int time, String reader, String genres, String[] favList)
     {
         mId = id;
         mPicture = picture;
@@ -60,7 +60,7 @@ public class BookMainItem
         mFavList = favList;
     }
 
-    public BookMainItem(int id, int picture, String title, Float time, String reader, String genres, String author, String desc, String path)
+    public BookMainItem(int id, int picture, String title, int time, String reader, String genres, String author, String desc, String path)
     {
         mId = id;
         mPicture = picture;

@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.app.Fragment;
+import androidx.appcompat.app.AppCompatDelegate;
 
+import android.app.Fragment;
+import com.chaquo.python.android.AndroidPlatform;
 import android.app.FragmentManager;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.chaquo.python.Python;
 import com.example.myapplication.fragments.BookFragment;
 import com.example.myapplication.fragments.Recommendation;
 import com.example.myapplication.fragments.SmallPlayerFragment;
@@ -29,9 +32,15 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
         final Button button_rec = (Button) findViewById(R.id.rec_btn);
         final Button button_book = (Button) findViewById(R.id.book_btn);
         final ImageButton button_usr = (ImageButton) findViewById(R.id.usr_btn);
+
+        if (!Python.isStarted()) {
+            Python.start(new AndroidPlatform(this));
+        }
 
 
 

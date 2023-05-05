@@ -2,26 +2,36 @@ package com.example.myapplication.classes;
 
 public class BookRecommendItem
 {
-    private int mPicture;
+    private String mPicture;
     private int mId;
     private String mTitle;
-    private String mReader;
+    private String mAuthor;
+    private String mDesc;
+    private String mGenre;
 
     public int getId() {return mId;}
-    public int getPicture() {
+    public String getPicture() {
         return mPicture;
     }
     public String getTitle() {
         return mTitle;
     }
-    public String getReader() {
-        return mReader;
+    public String getAuthor() {
+        return mAuthor;
+    }
+    public String getDesc() {
+        return mDesc;
+    }
+    public String getGenre() {
+        return mGenre;
     }
 
-    public BookRecommendItem(int id, int picture, String title, String reader)
+    public BookRecommendItem(int id, String picture, String title, String author, String desc, String genre)
     {   mId = id;
         mPicture = picture;
         mTitle = title;
-        mReader = reader;
+        mAuthor = author;
+        mDesc = desc;
+        mGenre = genre;
     }
 }
