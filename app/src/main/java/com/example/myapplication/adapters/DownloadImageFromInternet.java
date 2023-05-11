@@ -12,7 +12,6 @@ public class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
 
     public DownloadImageFromInternet(ImageView imageView) {
         this.imageView = imageView;
-        //Toast.makeText(getApplicationContext(), "Please wait, it may take a few minute...",Toast.LENGTH_SHORT).show();
     }
 
     protected Bitmap doInBackground(String... urls) {

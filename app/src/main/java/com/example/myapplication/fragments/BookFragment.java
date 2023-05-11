@@ -202,7 +202,6 @@ public class BookFragment extends Fragment {
             @Override
             public void onClick(View view)
             {
-
                 doBrowseFile();
             }
         });
@@ -240,8 +239,7 @@ public class BookFragment extends Fragment {
     private void doBrowseFile()
     {
         Intent chooseFileIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        chooseFileIntent.setType("*/*");
-        // Only return URIs that can be opened with ContentResolver
+        chooseFileIntent.setType("audio/*");
         chooseFileIntent.addCategory(Intent.CATEGORY_OPENABLE);
 
         chooseFileIntent = Intent.createChooser(chooseFileIntent, "Choose a file");

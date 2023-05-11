@@ -49,6 +49,7 @@ public class Recommendation extends Fragment {
     Cursor userCursor;
     ListRecommendViewAdapter adapter;
     GridView gridView;
+    GridView gridViewRomance;
 
     public Recommendation() {
         // Required empty public constructor
@@ -88,13 +89,17 @@ public class Recommendation extends Fragment {
         View v = inflater.inflate(R.layout.fragment_recommendation, container, false);
         Button btn_update = v.findViewById(R.id.btn_rec_update);
         gridView= v.findViewById(R.id.gridViewRecommend);
+        gridViewRomance= v.findViewById(R.id.gridViewRecommendRomance);
         ArrayList<BookRecommendItem> items = new ArrayList<>();
 
 
         databaseHelper = new DatabaseHelper(getActivity());
         db = databaseHelper.getReadableDatabase();
 
-        updateDB();
+        String whereClause = " Where " + DatabaseHelper.COLUMN_GENRE +" = 'фантастика';";
+        updateDB(gridView, whereClause);
+        whereClause = " Where " + DatabaseHelper.COLUMN_GENRE +" = 'проза';";
+        updateDB(gridViewRomance, whereClause);
 
         btn_update.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,6 +114,8 @@ public class Recommendation extends Fragment {
                 String author = "";
                 String genre = "";
                 String desc = "";
+
+                String whereClause = " Where " + DatabaseHelper.COLUMN_GENRE +" = 'фантастика'";
 
                 userCursor.moveToFirst();
                 while (!userCursor.isAfterLast())
@@ -139,7 +146,46 @@ public class Recommendation extends Fragment {
                     db.insert(DatabaseHelper.TABLE_BI_REC, null, cv);
                 }
 
-                updateDB();
+                whereClause = " Where " + DatabaseHelper.COLUMN_GENRE +" = 'фантастика';";
+                updateDB(gridView, whereClause);
+
+
+                userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " Where " + DatabaseHelper.COLUMN_GENRE +" = 'Проза' ORDER BY RANDOM() LIMIT 1", null);
+                // определяем, какие столбцы из курсора будут выводиться в ListView
+                title = "";
+                author = "";
+                genre = "";
+                desc = "";
+
+                userCursor.moveToFirst();
+                while (!userCursor.isAfterLast())
+                {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
+                    title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+                    author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
+                    genre = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+                    desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
+
+                    userCursor.moveToNext();
+                }
+                userCursor.close();
+
+                recs = pythonFile.callAttr("main", title, genre, desc, author).toJava(String[][].class);
+
+                for (String[] rec : recs)
+                {
+                    //items.add(new BookRecommendItem(0,rec[0], rec[1], rec[2], rec[3], rec[4]));
+
+                    ContentValues cv = new ContentValues();
+                    cv.put(DatabaseHelper.COLUMN_PATH, rec[0]);
+                    cv.put(DatabaseHelper.COLUMN_TITLE, rec[1]);
+                    cv.put(DatabaseHelper.COLUMN_AUTHOR, rec[2]);
+                    cv.put(DatabaseHelper.COLUMN_DESC, rec[3]);
+                    cv.put(DatabaseHelper.COLUMN_GENRE, rec[4]);
+                    db.insert(DatabaseHelper.TABLE_BI_REC, null, cv);
+                }
+
+                whereClause = " Where " + DatabaseHelper.COLUMN_GENRE +" = 'проза';";
+                updateDB(gridViewRomance, whereClause);
             }
         });
 
@@ -160,16 +206,14 @@ public class Recommendation extends Fragment {
     }
 
 
-    private void updateDB()
+    private void updateDB(GridView gridView, String whereClause)
     {
-        final String[] favs = new String[] {"ok?"};
-
         ArrayList<BookRecommendItem> items = new ArrayList<>();
-
+        System.out.println(whereClause);
         //получаем данные из бд в виде курсора
-        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI_REC, null);
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI_REC + whereClause, null);
         // определяем, какие столбцы из курсора будут выводиться в ListView
-
+        System.out.println(userCursor.getCount());
         userCursor.moveToFirst();
         while (!userCursor.isAfterLast())
         {   int id =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_BOOK_ID));
@@ -178,6 +222,10 @@ public class Recommendation extends Fragment {
             String desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
             String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
             String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
+
+
+            System.out.println(genres);
+
             items.add(new BookRecommendItem(id, img_path, title, author, desc, genres));
 
             userCursor.moveToNext();

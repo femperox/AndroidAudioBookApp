@@ -235,8 +235,8 @@ public class StatisticsFragment extends Fragment {
         plot.getGraph().setPaddingBottom(32.0f);
 
 // создание объекта BarSeries и добавление его в диаграмму
-        BarSeries series = new BarSeries("Count", SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, counts, months);
-        plot.addSeries(series, new BarFormatter(Color.rgb(0, 175, 255), Color.WHITE));
+        //BarSeries series = new BarSeries("Count", SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, counts, months);
+        //plot.addSeries(series, new BarFormatter(Color.rgb(0, 175, 255), Color.WHITE));
 
     }
 

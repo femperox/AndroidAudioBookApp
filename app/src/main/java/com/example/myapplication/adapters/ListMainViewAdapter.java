@@ -23,8 +23,8 @@ import java.util.Locale;
 
 public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
 {
-    private ArrayList<BookMainItem> myList;  // for loading main list
-    private ArrayList<BookMainItem> arraylist=null;  // for loading  filter data
+    private ArrayList<BookMainItem> myList;
+    private ArrayList<BookMainItem> arraylist=null;
 
     public ListMainViewAdapter(@NonNull Context context, ArrayList<BookMainItem> items) {
         super(context, 0, items);
@@ -44,7 +44,6 @@ public class ListMainViewAdapter extends ArrayAdapter<BookMainItem>
             listItem = LayoutInflater.from(getContext()).inflate(R.layout.book_item_main, parent, false);
         }
 
-        // Get the {@link Word} object located at this position in the list
         BookMainItem currentItem = getItem(position);
 
         TextView id = listItem.findViewById(R.id.tv_bookId);

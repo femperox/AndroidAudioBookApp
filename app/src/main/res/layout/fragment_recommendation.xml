@@ -30,7 +30,29 @@
     <GridView
         android:id="@+id/gridViewRecommend"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:columnWidth="100dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:horizontalSpacing="5dp"
+        android:numColumns="auto_fit"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="35dp"></GridView>
+
+    <TextView
+        android:id="@+id/tv44"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:text="Проза"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="24sp" />
+
+    <GridView
+        android:id="@+id/gridViewRecommendRomance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:columnWidth="100dp"
         android:focusable="true"
         android:gravity="center"
