@@ -3,6 +3,8 @@ package com.example.myapplication.fragments;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.os.Bundle;
 
@@ -21,13 +23,9 @@ import com.example.myapplication.DatabaseHelper;
 import com.example.myapplication.R;
 
 import static com.example.myapplication.fragments.BookFragment.mPlayer;
-import static com.example.myapplication.fragments.BookFragment.stopPlayer;
-
-import androidx.core.view.DragStartHelper;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,6 +49,9 @@ public class FullPlayerFragment extends Fragment {
     TextView tv_current_time;
     SeekBar sk;
     private Timer timer;
+    DatabaseHelper databaseHelper;
+    SQLiteDatabase db;
+    Cursor userCursor;
 
     public FullPlayerFragment() {
         // Required empty public constructor
@@ -95,17 +96,45 @@ public class FullPlayerFragment extends Fragment {
         Button btn_right = v.findViewById(R.id.btn_bigPlayer_right);
         ImageButton btn_eqv = v.findViewById(R.id.ib_bigPlayer_eqv);
         TextView tv_full_time = v.findViewById(R.id.tv_bigPlayer_fullTime);
+        TextView tv_title = v.findViewById(R.id.tv_bigPlayer_Title);
+        TextView tv_author = v.findViewById(R.id.tv_bigPlayer_author);
         tv_current_time = v.findViewById(R.id.tv_bigPlayer_startTime);
         TextView tv_close = v.findViewById(R.id.tv_bigPlayer_close);
         LinearLayout ll = v.findViewById(R.id.ll_bigPlayer);
 
+        databaseHelper = new DatabaseHelper(getActivity());
+
+        db = databaseHelper.getReadableDatabase();
+        Bundle bundle = this.getArguments();
+        int id = bundle.getInt(DatabaseHelper.COLUMN_BOOK_ID);
+        //получаем данные из бд в виде курсора
+        userCursor =  db.rawQuery("select * from "+ DatabaseHelper.TABLE_BI + " where " + DatabaseHelper.COLUMN_BOOK_ID + " = " + id, null);
+        // определяем, какие столбцы из курсора будут выводиться в ListView
+
+        userCursor.moveToFirst();
+        String path = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PATH));
+        String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
+        String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
+        Integer time =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
+        System.out.println(path);
+
+        userCursor.close();
+
+        tv_title.setText(title);
+        tv_author.setText(author);
+
+        String d = DurationFormatUtils.formatDuration(time, "HH:mm:ss", true);
+        tv_full_time.setText(d);
+
         sk = v.findViewById(R.id.sb_bigPlayer);
         SeekBar sk_volume = v.findViewById(R.id.sk_bigPlayer_volume);
 
+        /*
         sk.setMax(mPlayer.getDuration());
         sk.setProgress(mPlayer.getCurrentPosition());
         String d = DurationFormatUtils.formatDuration(mPlayer.getDuration(), "HH:mm:ss", true);
         tv_full_time.setText(d);
+         */
 
         AudioManager audioManager = (AudioManager) this.getContext().getSystemService(Context.AUDIO_SERVICE);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);

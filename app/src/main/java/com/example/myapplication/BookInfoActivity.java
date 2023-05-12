@@ -89,6 +89,7 @@ public class BookInfoActivity extends AppCompatActivity {
             String genres = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_GENRE));
             String desc = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_DESC));
             String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
+            Integer time =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
 
             userCursor.close();
 
@@ -99,6 +100,9 @@ public class BookInfoActivity extends AppCompatActivity {
             tv_author.setText(author);
             tv_desc.setText(desc);
             tv_genres.setText(genres);
+
+            String d = DurationFormatUtils.formatDuration(time, "HH:mm:ss", true);
+            tv_time.setText(d);
 
             new DownloadImageFromInternet(pic).execute(path);
 

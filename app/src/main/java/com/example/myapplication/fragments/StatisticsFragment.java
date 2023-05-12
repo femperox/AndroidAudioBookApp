@@ -215,16 +215,27 @@ public class StatisticsFragment extends Fragment {
 
         userCursor =  db.rawQuery("select count(*) as count, strftime('%m', " + DatabaseHelper.COLUMN_DATE_START + ") as month from "+ DatabaseHelper.TABLE_BI + " GROUP BY month", null);
 
-        List<Integer> months = new ArrayList<>();
-        List<Integer> counts = new ArrayList<>();
+        List<Integer> months = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12));
+        List<Integer> counts = new ArrayList<>(Arrays.asList(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0));
         if (userCursor.moveToFirst()) {
             do {
                 int month = userCursor.getInt(userCursor.getColumnIndex("month"));
                 int count = userCursor.getInt(userCursor.getColumnIndex("count"));
-                months.add(month);
-                counts.add(count);
+                //months.set(month-1, month);
+                counts.set(month-1, count);
             } while (userCursor.moveToNext());
         }
+
+        XYSeries series = new SimpleXYSeries(months, counts, "Series Name");
+
+        plot.setRangeStep(StepMode.INCREMENT_BY_VAL, 1);
+        plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1);
+        plot.setDomainBoundaries(0, 12, BoundaryMode.FIXED);
+
+        BarRenderer barRenderer = plot.getRenderer(BarRenderer.class);
+        //barRenderer.setBarGroupWidth(BarRenderer.BarGroupWidthMode.FIXED_WIDTH, PixelUtils.dpToPix(25));
+        //barRenderer.setBarGroupWidth(BarRenderer.BarGroupWidthMode.FIXED_WIDTH, 0.7f); // задание фиксированной ширины для группы столбцов
+
 
 // настройка параметров диаграммы
 
@@ -234,9 +245,15 @@ public class StatisticsFragment extends Fragment {
         plot.getGraph().setPaddingTop(32.0f);
         plot.getGraph().setPaddingBottom(32.0f);
 
+        int r = 170;
+        int g = 102;
+        int b = 204;
+        BarFormatter formatter = new BarFormatter(Color.rgb(r, g, b), Color.DKGRAY);
+
+
 // создание объекта BarSeries и добавление его в диаграмму
         //BarSeries series = new BarSeries("Count", SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, counts, months);
-        //plot.addSeries(series, new BarFormatter(Color.rgb(0, 175, 255), Color.WHITE));
+        plot.addSeries(series, formatter);
 
     }
 
@@ -247,7 +264,7 @@ public class StatisticsFragment extends Fragment {
         //pie.getLegend().setTableModel(new DynamicTableModel(4, 2));
 
         TextPaint textPaint = new TextPaint();
-        //textPaint.setTextSize(10);
+        //textPaint.setTextSize(20);
         textPaint.setColor(Color.BLACK);
 
         pie.getLegend().setTextPaint(textPaint);

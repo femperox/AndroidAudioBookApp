@@ -149,12 +149,18 @@ public class SmallPlayerFragment extends Fragment {
         String path = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_PATH));
         String title = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TITLE));
         String author = userCursor.getString(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_AUTHOR));
-
+        Integer time =  userCursor.getInt(userCursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_TIME));
         System.out.println(path);
 
         userCursor.close();
 
-        tv_author_title.setText(title + " - " + author);
+        tv_author_title.setText(title);
+
+        sk.setMax(time);
+
+        String d = DurationFormatUtils.formatDuration(time, "HH:mm:ss", true);
+        tv_full_time.setText(d);
+
 
         ll.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,11 +211,14 @@ public class SmallPlayerFragment extends Fragment {
                             setDataSource(path);
                             mPlayer.prepare();
 
+                            /*
                             int max = mPlayer.getDuration();
                             sk.setMax(mPlayer.getDuration());
 
                             String d = DurationFormatUtils.formatDuration(mPlayer.getDuration(), "HH:mm:ss", true);
                             tv_full_time.setText(d);
+                            */
+
                             sk.setProgress(0);
 
                             firstPlay = false;
@@ -298,8 +307,6 @@ public class SmallPlayerFragment extends Fragment {
         },0,100);
 
 
-
-
         return v;
     }
 
@@ -311,10 +318,7 @@ public class SmallPlayerFragment extends Fragment {
             {
                //Intent openLinkIntent = new Intent(ACTION_OPEN_DOCUMENT, Uri.parse(path));
                Uri uri = Uri.parse(Uri.decode(path));
-               System.out.println("ehy?");
                String readOnlyMode = "r";
-               System.out.println(Uri.parse(Uri.decode(path)));
-               System.out.println();
 
 
                 //getContext().grantUriPermission(getContext().getPackageName(), uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -354,7 +358,6 @@ public class SmallPlayerFragment extends Fragment {
         Bundle bundle = new Bundle();
         bundle.putInt(DatabaseHelper.COLUMN_BOOK_ID, id);
         fragment.setArguments(bundle);
-
 
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         //fragmentTransaction.setCustomAnimations(R.animator.slide_in_left);

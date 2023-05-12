@@ -34,7 +34,7 @@
             tools:src="@tools:sample/avatars" />
 
         <TextView
-            android:id="@+id/tv_bigPlayer_AuthorTitle"
+            android:id="@+id/tv_bigPlayer_Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -44,7 +44,7 @@
             android:textSize="24sp" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/tv_bigPlayer_author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -71,10 +71,10 @@
 
             <TextView
                 android:id="@+id/tv_bigPlayer_startTime"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
-                android:text="olk"
+                android:text="00:00:19"
                 android:textColor="#000000"
                 android:textSize="15sp" />
 
@@ -84,6 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0"
                 android:gravity="right"
+                android:text="4"
                 android:textColor="#000000"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -134,6 +135,15 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0"
                 android:text="»" />
+
+            <ImageButton
+                android:id="@+id/ib_bigPlayer_info"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="80dp"
+                android:layout_weight="0"
+                android:scaleType="centerInside"
+                android:src="@drawable/info" />
         </LinearLayout>
 
         <LinearLayout
