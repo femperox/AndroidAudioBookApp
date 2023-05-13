@@ -54,6 +54,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -192,7 +193,7 @@ public class StatisticsFragment extends Fragment {
         plot.getBorderPaint().setColor(Color.TRANSPARENT);
 
         //barText = v.findViewById(R.id.tv_statistics_bar);
-
+        /*
         barText = new TextLabelWidget(plot.getLayoutManager(), NO_SELECTION_TXT,
                 new Size(
                         PixelUtils.dpToPix(100), SizeMode.ABSOLUTE,
@@ -211,7 +212,7 @@ public class StatisticsFragment extends Fragment {
                 PixelUtils.dpToPix(45), VerticalPositioning.ABSOLUTE_FROM_TOP,
                 Anchor.TOP_MIDDLE);
         barText.pack();
-
+        */
 
         userCursor =  db.rawQuery("select count(*) as count, strftime('%m', " + DatabaseHelper.COLUMN_DATE_START + ") as month from "+ DatabaseHelper.TABLE_BI + " GROUP BY month", null);
 
@@ -226,20 +227,24 @@ public class StatisticsFragment extends Fragment {
             } while (userCursor.moveToNext());
         }
 
-        XYSeries series = new SimpleXYSeries(months, counts, "Series Name");
+        XYSeries series = new SimpleXYSeries(months, counts, "");
 
         plot.setRangeStep(StepMode.INCREMENT_BY_VAL, 1);
         plot.setDomainStep(StepMode.INCREMENT_BY_VAL, 1);
-        plot.setDomainBoundaries(0, 12, BoundaryMode.FIXED);
+        plot.setDomainBoundaries(1, 12, BoundaryMode.FIXED);
+        //plot.set
 
         BarRenderer barRenderer = plot.getRenderer(BarRenderer.class);
         //barRenderer.setBarGroupWidth(BarRenderer.BarGroupWidthMode.FIXED_WIDTH, PixelUtils.dpToPix(25));
         //barRenderer.setBarGroupWidth(BarRenderer.BarGroupWidthMode.FIXED_WIDTH, 0.7f); // задание фиксированной ширины для группы столбцов
 
 
-// настройка параметров диаграммы
+        // настройка параметров диаграммы
 
         plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.LEFT).setFormat(new DecimalFormat("0"));
+        plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new DecimalFormat("0"));
+        //plot.getGraph().getLineLabelStyle(XYGraphWidget.Edge.BOTTOM).setFormat(new SimpleDateFormat("MMM"));
+
         plot.getGraph().setPaddingLeft(32.0f);
         plot.getGraph().setPaddingRight(32.0f);
         plot.getGraph().setPaddingTop(32.0f);
@@ -250,10 +255,10 @@ public class StatisticsFragment extends Fragment {
         int b = 204;
         BarFormatter formatter = new BarFormatter(Color.rgb(r, g, b), Color.DKGRAY);
 
-
 // создание объекта BarSeries и добавление его в диаграмму
         //BarSeries series = new BarSeries("Count", SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, counts, months);
         plot.addSeries(series, formatter);
+
 
     }
 
@@ -293,6 +298,7 @@ public class StatisticsFragment extends Fragment {
         {
             Segment segment = new Segment(item.getSecond(), item.getFirst());
             SegmentFormatter formatter = new SegmentFormatter(Color.rgb(r, g, b), Color.TRANSPARENT);
+            formatter.getLabelPaint().setTextSize(35);
             pie.addSegment(segment, formatter);
             r += 15; g += 10; b -= 2;
         }

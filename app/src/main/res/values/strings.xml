@@ -16,4 +16,8 @@
         <item>По чтецу</item>
         <item>По названию</item>
     </string-array>
+
+    <string-array name="years">
+        <item>2023</item>
+    </string-array>
 </resources>
